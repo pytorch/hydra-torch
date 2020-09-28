@@ -29,3 +29,4 @@ def setup_dev_env(session):
 @nox.session(python=PYTHON_VERSIONS)
 def lint(session):
     setup_dev_env(session)
+    session.run("flake8", "--config", ".flake8")
