@@ -1,5 +1,5 @@
 # hydra-torch
-Hydra-torch is a set of Structured Configs generated from PyTorch to 
+Configuration classes enabling type-safe PyTorch configuration for Hydra apps 
 
 ### License
 hydra-torch is licensed under [MIT License](LICENSE).
