@@ -32,9 +32,9 @@ jobs:
       - run:
           name: Testing HyPytorch Configs 
           command: |
-            conda activate hypytorch
             export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
             export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
+            conda activate hypytorch
             pip install nox
             pip install dataclasses
             nox -s lint tests -ts
