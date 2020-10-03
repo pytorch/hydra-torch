@@ -1,6 +1,5 @@
 version: 2.1
 
- 
 commands:
   linux:
     description: Commands run on Linux
@@ -24,7 +23,7 @@ commands:
 test_linux:
   parameters:
     py_version:
-  	type: string
+    type: string
   docker:
     - image: cimg/base:stable-18.04
   steps:
