@@ -7,6 +7,7 @@ jobs:
           username: mydockerhub-user
           password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
     steps:
+      - checkout
       - run:
           name: The First Step
           command: |
