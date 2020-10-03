@@ -14,7 +14,7 @@ commands:
             curl -o Miniconda3-py38_4.8.3-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh
             bash ./Miniconda3-py38_4.8.3-Linux-x86_64.sh -b
       - run:
-          name: Preparing environment - Hydra
+          name: Preparing environment - HyPytorch Configs
           command: |
             ~/miniconda3/bin/conda init bash
             ~/miniconda3/bin/conda create -n hypytorch python=<< parameters.py_version >> -yq
@@ -32,6 +32,7 @@ jobs:
       - run:
           name: Testing HyPytorch Configs 
           command: |
+			conda activate hypytorch
             export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
             export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
             pip install nox
