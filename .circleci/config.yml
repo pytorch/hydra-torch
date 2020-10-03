@@ -19,24 +19,24 @@ commands:
             ~/miniconda3/bin/conda init bash
             ~/miniconda3/bin/conda create -n hypytorch python=<< parameters.py_version >> -yq
 
-
-test_linux:
-  parameters:
-    py_version:
-    type: string
-  docker:
-    - image: cimg/base:stable-18.04
-  steps:
-    - linux:
-      py_version: << parameters.py_version >>
-    - run:
-      name: Testing HyPytorch Configs 
-      command: |
-        export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
-        export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
-        pip install nox
-        pip install dataclasses
-        nox -s lint tests -ts
+jobs: 
+  test_linux:
+    parameters:
+      py_version:
+      type: string
+    docker:
+      - image: cimg/base:stable-18.04
+    steps:
+      - linux:
+        py_version: << parameters.py_version >>
+      - run:
+        name: Testing HyPytorch Configs 
+        command: |
+          export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
+          export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
+          pip install nox
+          pip install dataclasses
+          nox -s lint tests -ts
   
 
 
