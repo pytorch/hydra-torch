@@ -1,20 +1,51 @@
 version: 2.1
-jobs:
-  build:
-    docker:
-      - image: alpine:3.7
-        auth:
-          username: mydockerhub-user
-          password: $DOCKERHUB_PASSWORD  # context / project UI env-var reference
+
+ 
+commands:
+  linux:
+    description: Commands run on Linux
+    parameters:
+      py_version:
+        type: string
     steps:
       - checkout
       - run:
-          name: The First Step
+          name: Preparing environment - Conda
           command: |
-            echo 'Hello World!'
-            echo 'This is the delivery pipeline'
+            curl -o Miniconda3-py38_4.8.3-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh
+            bash ./Miniconda3-py38_4.8.3-Linux-x86_64.sh -b
       - run:
-          name: Code Has Arrived 
+          name: Preparing environment - Hydra
           command: |
-            ls -al
-            echo 'This should look familiar.'
+            ~/miniconda3/bin/conda init bash
+            ~/miniconda3/bin/conda create -n hypytorch python=<< parameters.py_version >> -yq
+
+
+test_linux:
+  parameters:
+    py_version:
+  	type: string
+  docker:
+    - image: cimg/base:stable-18.04
+  steps:
+    - linux:
+  	  py_version: << parameters.py_version >>
+    - run:
+  	  name: Testing HyPytorch Configs 
+  	  command: |
+  		export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
+  		export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
+  		pip install nox
+  		pip install dataclasses
+  		nox -s lint tests -ts
+  
+
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - test_linux:
+          matrix:
+            parameters:
+              py_version: ["3.6", "3.7", "3.8"]
