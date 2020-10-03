@@ -35,8 +35,8 @@ jobs:
             export PATH="$HOME/miniconda3/envs/hypytorch/bin:$PATH"
             export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
             pip install nox
-            pip install dataclasses
-            nox -s lint tests -ts
+            pip install dataclasses #for 3.6 I guess
+            nox
   
 
 
