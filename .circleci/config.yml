@@ -12,3 +12,8 @@ jobs:
           command: |
             echo 'Hello World!'
             echo 'This is the delivery pipeline'
+      - run:
+          name: Code Has Arrived 
+          command: |
+            ls -al
+            echo 'This should look familiar.'
