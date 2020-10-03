@@ -23,25 +23,25 @@ jobs:
   test_linux:
     parameters:
       py_version:
-      type: string
+        type: string
     docker:
       - image: cimg/base:stable-18.04
     steps:
       - linux:
-        py_version: << parameters.py_version >>
+          py_version: << parameters.py_version >>
       - run:
-        name: Testing HyPytorch Configs 
-        command: |
-          export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
-          export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
-          pip install nox
-          pip install dataclasses
-          nox -s lint tests -ts
+          name: Testing HyPytorch Configs 
+          command: |
+            export PATH="$HOME/miniconda3/envs/hydra/bin:$PATH"
+            export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
+            pip install nox
+            pip install dataclasses
+            nox -s lint tests -ts
   
 
 
 workflows:
-  version: 2
+  version: 2.1
   build:
     jobs:
       - test_linux:
