@@ -2,7 +2,7 @@
 import pathlib
 
 import pkg_resources
-from setuptools import find_packages, setup
+from setuptools import find_namespace_packages, setup
 
 with pathlib.Path("requirements/requirements.txt").open() as requirements_txt:
     install_requires = [
@@ -14,7 +14,7 @@ with pathlib.Path("requirements/requirements.txt").open() as requirements_txt:
 setup(
     name="hydra-torch-config",
     version="0.9",
-    packages=find_packages(include=["gen"]),
+    packages=find_namespace_packages(include=["config.*"]),
     author="Omry Yadan",  # TODO: additional maintainers
     author_email="omry@fb.com",  # TODO: additional maintainers
     url="http://hydra.cc",  # TODO: repo link
