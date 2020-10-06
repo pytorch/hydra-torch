@@ -40,8 +40,9 @@ def black(session):
     setup_dev_env(session)
     session.run("black", *targets)
 
+
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def tests(session):
     setup_dev_env(session)
-    session.install(".") #install config package
+    session.install(".")  # install config package
     session.run('pytest', 'tests')
