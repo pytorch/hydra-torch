@@ -29,13 +29,19 @@ def setup_dev_env(session):
     session.run("pip", "install", "-r", "requirements/dev.txt", silent=SILENT)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def lint(session):
     setup_dev_env(session)
     session.run("flake8", "--config", ".flake8", *targets)
 
 
-@nox.session(python=PYTHON_VERSIONS)
+@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def black(session):
     setup_dev_env(session)
     session.run("black", *targets)
+
+@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
+def tests(session):
+    setup_dev_env(session)
+    session.install(".") #install config package
+    session.run('pytest', 'tests')
