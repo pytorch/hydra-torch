@@ -29,3 +29,16 @@ configen:
         - Rprop
         - SGD
         - SparseAdam 
+
+    - name: torch.nn.modules
+      # for each module, a list of classes
+      classes:
+        - Identity
+        - Linear
+        - Bilinear
+        - Conv1d
+        - Conv2d
+        - Conv3d
+        - ConvTranspose1d
+        - ConvTranspose2d
+        - ConvTranspose3d
