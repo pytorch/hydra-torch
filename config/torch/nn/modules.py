@@ -120,3 +120,38 @@ class ConvTranspose3dConf:
     bias: bool = True
     dilation: Any = MISSING  # Union[int, Tuple[int, int, int]]
     padding_mode: str = "zeros"
+
+
+@dataclass
+class DropoutConf:
+    _target_: str = "torch.nn.modules.Dropout"
+    p: float = 0.5
+    inplace: bool = False
+
+
+@dataclass
+class Dropout2dConf:
+    _target_: str = "torch.nn.modules.Dropout2d"
+    p: float = 0.5
+    inplace: bool = False
+
+
+@dataclass
+class Dropout3dConf:
+    _target_: str = "torch.nn.modules.Dropout3d"
+    p: float = 0.5
+    inplace: bool = False
+
+
+@dataclass
+class AlphaDropoutConf:
+    _target_: str = "torch.nn.modules.AlphaDropout"
+    p: float = 0.5
+    inplace: bool = False
+
+
+@dataclass
+class FeatureAlphaDropoutConf:
+    _target_: str = "torch.nn.modules.FeatureAlphaDropout"
+    p: float = 0.5
+    inplace: bool = False

@@ -42,3 +42,8 @@ configen:
         - ConvTranspose1d
         - ConvTranspose2d
         - ConvTranspose3d
+        - Dropout
+        - Dropout2d
+        - Dropout3d
+        - AlphaDropout
+        - FeatureAlphaDropout
