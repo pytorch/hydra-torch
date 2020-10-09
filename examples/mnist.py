@@ -23,11 +23,20 @@ class MNISTNetConf:
     layer5: Dropout2dConf = MISSING
     layer6: LinearConf = MISSING
 
+
+@dataclass
+class MNISTConv2dConf(Conv2dConf):
+    stride: int = 1
+    padding: int = 0
+    dilation: int = 1
+    kernel_size: int = 3
+
+
 cs = ConfigStore.instance()
 
 cs.store(name="config", node=MNISTNetConf)
-cs.store(group="layer1", name="conv1", node=Conv2dConf(in_channels=1, out_channels=32, kernel_size=3))
-cs.store(group="layer2", name="conv2", node=Conv2dConf(in_channels=32, out_channels=64, kernel_size=3))
+cs.store(group="layer1", name="conv1", node=MNISTConv2dConf(in_channels=1, out_channels=32))
+cs.store(group="layer2", name="conv2", node=MNISTConv2dConf(in_channels=32, out_channels=64))
 cs.store(group="layer3", name="dropout1", node=Dropout2dConf(p=0.25))
 cs.store(group="layer4", name="linear1", node=LinearConf(in_features=9216, out_features=128))
 cs.store(group="layer5", name="dropout2", node=Dropout2dConf(p=0.5))
