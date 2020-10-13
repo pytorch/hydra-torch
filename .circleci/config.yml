@@ -1,0 +1,49 @@
+version: 2.1
+
+commands:
+  linux:
+    description: Commands run on Linux
+    parameters:
+      py_version:
+        type: string
+    steps:
+      - checkout
+      - run:
+          name: Preparing environment - Conda
+          command: |
+            curl -o Miniconda3-py38_4.8.3-Linux-x86_64.sh https://repo.anaconda.com/miniconda/Miniconda3-py38_4.8.3-Linux-x86_64.sh
+            bash ./Miniconda3-py38_4.8.3-Linux-x86_64.sh -b
+      - run:
+          name: Preparing environment - Hydra Torch Configs
+          command: |
+            ~/miniconda3/bin/conda init bash
+            ~/miniconda3/bin/conda create -n hypytorch python=<< parameters.py_version >> -yq
+
+jobs: 
+  test_linux:
+    parameters:
+      py_version:
+        type: string
+    docker:
+      - image: cimg/base:stable-18.04
+    steps:
+      - linux:
+          py_version: << parameters.py_version >>
+      - run:
+          name: Linting/Formatting/Testing Hydra Torch Configs 
+          command: |
+            export PATH="$HOME/miniconda3/envs/hypytorch/bin:$PATH"
+            export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
+            pip install nox
+            nox
+  
+
+
+workflows:
+  version: 2.1
+  build:
+    jobs:
+      - test_linux:
+          matrix:
+            parameters:
+              py_version: ["3.6", "3.7", "3.8"]

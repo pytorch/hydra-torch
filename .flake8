@@ -1,0 +1,13 @@
+[flake8]
+exclude = 
+    .git
+    ,.nox,build
+    ,hydra/grammar/gen
+    ,dist
+    ,tools/configen/example/gen
+    ,tools/configen/tests/test_modules/expected
+max-line-length = 119
+copyright-check = True
+select = E,F,W,C
+copyright-regexp=Copyright \(c\) Facebook, Inc. and its affiliates. All Rights Reserved
+ignore=W503,E203
