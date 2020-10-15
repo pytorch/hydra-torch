@@ -15,17 +15,42 @@ configen:
 
   # list of modules to generate configs for
   modules:
-    - name: torch.optim 
+    - name: torch.optim.adam
+      # for each module, a list of classes
+      classes:
+        - Adam
+
+    - name: torch.optim.adadelta
       # for each module, a list of classes
       classes:
         - Adadelta
-        - Adagrad
+
+    - name: torch.optim.sgd
+      # for each module, a list of classes
+      classes:
+        - SGD 
+
+    - name: torch.optim.rmsprop
+      # for each module, a list of classes
+      classes:
+        - RMSprop 
+
+    - name: torch.optim.adam
+      # for each module, a list of classes
+      classes:
+        # Optimizers
         - Adam
-        - Adamax
-        - AdamW
-        - ASGD
-        - LBFGS
-        - RMSprop
-        - Rprop
-        - SGD
-        - SparseAdam 
+
+    - name: torch.optim.lr_scheduler
+      classes:
+        # Schedulers
+        - LambdaLR
+        - MultiplicativeLR
+        - StepLR
+        - MultiStepLR
+        - ExponentialLR
+        - CosineAnnealingLR
+        - ReduceLROnPlateau
+        - CyclicLR
+        - CosineAnnealingWarmRestarts
+        - OneCycleLR
