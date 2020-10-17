@@ -37,13 +37,24 @@ class MNISTStepLRConf(StepLRConf):
     step_size: int = 1 
 
 @dataclass
-class MNISTNetConf:
+class MNISTModelConf:
+    # @package _group_ #is this how packages are done?
+    drop_prob: float = 0.2
+    in_features: 784 #configen auto gen these?
+    out_features: 10
+    hidden_dim: 1000
+    seed: 123
+
+@dataclass
+class MNISTConf:
     args: ExportedArgparseArgs
+    model: MNISTModelConf
     optim: AdadeltaConf
     scheduler: MNISTStepLRConf
 
+
 cs = ConfigStore.instance()
-cs.store(name="config", node=MNISTNetConf)
+cs.store(name="config", node=MNISTConf)
 
 ###### / Hydra Block ######
 
