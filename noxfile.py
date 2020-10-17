@@ -33,8 +33,8 @@ def setup_dev_env(session):
 def black(session):
     setup_dev_env(session)
     session.run("black", *targets)
- 
-  
+
+
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def lint(session):
     setup_dev_env(session)

@@ -1,3 +1,6 @@
+# This file mirrors the __init__.py within pytorch/torch/optim
+# It allows hydra-torch configs to be imported in the same style
+# flake8: noqa
 
 from .adadelta import AdadeltaConf
 from .adagrad import AdagradConf
