@@ -8,6 +8,7 @@ from torchvision import datasets, transforms
 from torch.optim.lr_scheduler import StepLR
 
 ###### Hydra Block ######
+from typing import List, Any
 from omegaconf import MISSING
 import hydra
 from hydra.core.config_store import ConfigStore
@@ -20,6 +21,7 @@ from config.torch.optim.lr_scheduler import StepLRConf
 @dataclass
 class CommonArgparseArgs:
     stuff: int = 1
+    checkpoint_name: str = 'unnamed.pt'
 
 @dataclass
 class ExportedArgparseArgs:
@@ -33,24 +35,18 @@ class ExportedArgparseArgs:
     seed: int = 1
 
 @dataclass
-class MNISTStepLRConf(StepLRConf):
-    step_size: int = 1 
-
-@dataclass
 class MNISTModelConf:
-    # @package _group_ #is this how packages are done?
     drop_prob: float = 0.2
-    in_features: 784 #configen auto gen these?
-    out_features: 10
-    hidden_dim: 1000
-    seed: 123
+    in_features: int = 784
+    out_features: int = 10
+    hidden_dim: int = 1000
 
 @dataclass
 class MNISTConf:
-    args: ExportedArgparseArgs
-    model: MNISTModelConf
-    optim: AdadeltaConf
-    scheduler: MNISTStepLRConf
+    args: ExportedArgparseArgs = ExportedArgparseArgs()
+    model: MNISTModelConf = MNISTModelConf()
+    optim: Any = AdadeltaConf()
+    scheduler: Any = StepLRConf(step_size=1)
 
 
 cs = ConfigStore.instance()
@@ -122,6 +118,8 @@ def test(model, device, test_loader):
 
 @hydra.main(config_name='config')
 def main(cfg):
+    print(cfg.pretty())
+    import ipdb; ipdb.set_trace()
     use_cuda = not cfg.args.no_cuda and torch.cuda.is_available()
     torch.manual_seed(cfg.args.seed)
     device = torch.device("cuda" if use_cuda else "cpu")
