@@ -107,7 +107,6 @@ def test(model, device, test_loader):
 @hydra.main(config_name='config')
 def main(cfg):
     print(cfg.pretty())
-    import ipdb; ipdb.set_trace()
     use_cuda = not cfg.args.no_cuda and torch.cuda.is_available()
     torch.manual_seed(cfg.args.seed)
     device = torch.device("cuda" if use_cuda else "cpu")
@@ -133,6 +132,7 @@ def main(cfg):
     #test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     model = Net().to(device)
+    # use hydra.utils.instantiate to instantiate the optimizer and the scheduler:
     optimizer = hydra.utils.instantiate(cfg.optim, params=model.parameters())
     scheduler = hydra.utils.instantiate(cfg.scheduler, optimizer=optimizer)
 

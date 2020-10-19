@@ -166,6 +166,7 @@ def main(cfg):
     #test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     model = Net(cfg.model).to(device)
+    # use hydra.utils.instantiate to instantiate the optimizer and the scheduler:
     optimizer = hydra.utils.instantiate(cfg.optim, params=model.parameters())
     scheduler = hydra.utils.instantiate(cfg.scheduler, optimizer=optimizer)
 
