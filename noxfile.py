@@ -11,7 +11,7 @@ VERBOSE = os.environ.get("VERBOSE", "0")
 SILENT = VERBOSE == "0"
 
 # Linted dirs/files:
-targets = "config", "tests", "noxfile.py"
+targets = "."
 
 
 def setup_dev_env(session):
@@ -36,7 +36,7 @@ def black_lint(session):
 
 
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
-def lint(session):
+def flake_lint(session):
     setup_dev_env(session)
     session.run("flake8", "--config", ".flake8", *targets)
 
