@@ -67,12 +67,12 @@ class CosineAnnealingLRConf:
 class ReduceLROnPlateauConf:
     _target_: str = "torch.optim.lr_scheduler.ReduceLROnPlateau"
     optimizer: Any = MISSING
-    mode: Any = min
+    mode: str = 'min'
     factor: Any = 0.1
     patience: Any = 10
     verbose: Any = False
     threshold: Any = 0.0001
-    threshold_mode: Any = rel
+    threshold_mode: str = 'rel'
     cooldown: Any = 0
     min_lr: Any = 0
     eps: Any = 1e-08
@@ -86,10 +86,10 @@ class CyclicLRConf:
     max_lr: Any = MISSING
     step_size_up: Any = 2000
     step_size_down: Any = None
-    mode: Any = triangular
+    mode: str = 'triangular'
     gamma: Any = 1.0
     scale_fn: Any = None
-    scale_mode: Any = cycle
+    scale_mode: str = 'cycle'
     cycle_momentum: Any = True
     base_momentum: Any = 0.8
     max_momentum: Any = 0.9
@@ -115,7 +115,7 @@ class OneCycleLRConf:
     epochs: Any = None
     steps_per_epoch: Any = None
     pct_start: Any = 0.3
-    anneal_strategy: Any = cos
+    anneal_strategy: str = 'cos'
     cycle_momentum: Any = True
     base_momentum: Any = 0.85
     max_momentum: Any = 0.95

@@ -17,7 +17,7 @@ setup(
     packages=find_namespace_packages(include=["config.*"]),
     author=["Omry Yadan", "Rosario Scalise"],
     author_email=["omry@fb.com", "rosario@cs.uw.edu"],
-    url="http://github.com/pytorch/hydra-torch",  
+    url="http://github.com/pytorch/hydra-torch",
     include_package_data=True,
     install_requires=install_requires,
 )
