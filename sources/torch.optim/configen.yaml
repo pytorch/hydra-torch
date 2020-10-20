@@ -20,6 +20,7 @@ configen:
   # list of modules to generate configs for
   modules:
     - name: torch.optim.adadelta
+      url: https://pytorch.org/docs/stable/optim.html#torch.optim.Adadelta
       # for each module, a list of classes
       classes:
         - Adadelta

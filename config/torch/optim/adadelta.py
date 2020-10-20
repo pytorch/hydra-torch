@@ -14,7 +14,9 @@ from typing import Any
 
 @dataclass
 class AdadeltaConf:
-    
+    """For more details on parameteres please refer to the original documentation:
+    https://pytorch.org/docs/stable/optim.html#torch.optim.Adadelta
+    """
     _target_: str = "torch.optim.adadelta.Adadelta"
     params: Any = MISSING
     lr: Any = 1.0

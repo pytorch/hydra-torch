@@ -14,7 +14,6 @@ from typing import Any
 
 @dataclass
 class LambdaLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.LambdaLR"
     optimizer: Any = MISSING
     lr_lambda: Any = MISSING
@@ -23,7 +22,6 @@ class LambdaLRConf:
 
 @dataclass
 class MultiplicativeLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.MultiplicativeLR"
     optimizer: Any = MISSING
     lr_lambda: Any = MISSING
@@ -32,7 +30,6 @@ class MultiplicativeLRConf:
 
 @dataclass
 class StepLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.StepLR"
     optimizer: Any = MISSING
     step_size: Any = MISSING
@@ -42,7 +39,6 @@ class StepLRConf:
 
 @dataclass
 class MultiStepLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.MultiStepLR"
     optimizer: Any = MISSING
     milestones: Any = MISSING
@@ -52,7 +48,6 @@ class MultiStepLRConf:
 
 @dataclass
 class ExponentialLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.ExponentialLR"
     optimizer: Any = MISSING
     gamma: Any = MISSING
@@ -61,7 +56,6 @@ class ExponentialLRConf:
 
 @dataclass
 class CosineAnnealingLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.CosineAnnealingLR"
     optimizer: Any = MISSING
     T_max: Any = MISSING
@@ -71,7 +65,6 @@ class CosineAnnealingLRConf:
 
 @dataclass
 class ReduceLROnPlateauConf:
-    
     _target_: str = "torch.optim.lr_scheduler.ReduceLROnPlateau"
     optimizer: Any = MISSING
     mode: Any = min
@@ -87,7 +80,6 @@ class ReduceLROnPlateauConf:
 
 @dataclass
 class CyclicLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.CyclicLR"
     optimizer: Any = MISSING
     base_lr: Any = MISSING
@@ -106,7 +98,6 @@ class CyclicLRConf:
 
 @dataclass
 class CosineAnnealingWarmRestartsConf:
-    
     _target_: str = "torch.optim.lr_scheduler.CosineAnnealingWarmRestarts"
     optimizer: Any = MISSING
     T_0: Any = MISSING
@@ -117,7 +108,6 @@ class CosineAnnealingWarmRestartsConf:
 
 @dataclass
 class OneCycleLRConf:
-    
     _target_: str = "torch.optim.lr_scheduler.OneCycleLR"
     optimizer: Any = MISSING
     max_lr: Any = MISSING
