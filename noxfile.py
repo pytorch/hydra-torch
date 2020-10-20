@@ -10,8 +10,8 @@ PYTHON_VERSIONS = os.environ.get(
 VERBOSE = os.environ.get("VERBOSE", "0")
 SILENT = VERBOSE == "0"
 
-# Linted & Formatted dirs/files:
-targets = "config", "tests", "noxfile.py"
+# Linted dirs/files:
+targets = "."
 
 
 def setup_dev_env(session):
@@ -30,14 +30,9 @@ def setup_dev_env(session):
 
 
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
-def black(session):
-    setup_dev_env(session)
-    session.run("black", *targets)
-
-
-@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def lint(session):
     setup_dev_env(session)
+    session.run("black", *targets, "--check")
     session.run("flake8", "--config", ".flake8", *targets)
 
 
@@ -45,4 +40,4 @@ def lint(session):
 def tests(session):
     setup_dev_env(session)
     session.install(".")  # install config package
-    session.run('pytest', 'tests')
+    session.run("pytest", "tests")

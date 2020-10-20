@@ -13,7 +13,6 @@ from .sgd import SGDConf
 from .rprop import RpropConf
 from .rmsprop import RMSpropConf
 from .lbfgs import LBFGSConf
-#from . import lr_scheduler
 
 del adadelta
 del adagrad
