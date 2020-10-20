@@ -30,14 +30,9 @@ def setup_dev_env(session):
 
 
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
-def black_lint(session):
+def lint(session):
     setup_dev_env(session)
     session.run("black", *targets, "--check")
-
-
-@nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
-def flake_lint(session):
-    setup_dev_env(session)
     session.run("flake8", "--config", ".flake8", *targets)
 
 
