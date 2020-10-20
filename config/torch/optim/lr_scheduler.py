@@ -67,7 +67,7 @@ class CosineAnnealingLRConf:
 class ReduceLROnPlateauConf:
     _target_: str = "torch.optim.lr_scheduler.ReduceLROnPlateau"
     optimizer: Any = MISSING
-    mode: Any = min
+    mode: Any = 'min'
     factor: Any = 0.1
     patience: Any = 10
     verbose: Any = False
