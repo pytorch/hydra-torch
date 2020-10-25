@@ -4,8 +4,9 @@ This tutorial series is built around the [PyTorch MNIST example] and is meant to
 
 The source file can be found in [mnist_00.py]
 
-### The 'HYDRA BLOCK'
 ***
+## The 'HYDRA BLOCK'
+
 For clarity in this tutorial, as we modify the [PyTorch MNIST example], will make the diffs explicit. Most of the changes we introduce will be at the top of the file within the commented `##### HYDRA BLOCK #####`, though in practice much of this block could reside in its own concise imported file.
 
 ### Imports
@@ -74,7 +75,7 @@ Very simply, we add the top-level config class `MNISTConf` to the `ConfigStore` 
 cs = ConfigStore.instance()
 cs.store(name="config", node=MNISTConf)
 ```
-The name `config` will be passed to the `@hydra` decordator when we get to `main()`.
+The name `config` will be passed to the `@hydra` decorator when we get to `main()`.
 
 ***
 ### Parting with Argparse
@@ -144,7 +145,7 @@ def main(cfg):
     print(cfg.pretty())
     ...
 ```
-The single idea here is that `@hydra.main` looks for a config in the `ConfigStore` instance, `cs` named "`config`". It finds `MNISTConf` (our top level conf) and populates `cfg` inside `main()` with the entire structured config including our optimizer config, `cfg.adadelta` and our scheduler config, `cfg.steplr`.
+The single idea here is that `@hydra.main` looks for a config in the `ConfigStore` instance, `cs` named "`config`". It finds `MNISTConf` (our top level conf) and populates `cfg` inside `main()` with the entire structured config including our optimizer and scheduler configs, `cfg.adadelta` and `cfg.steplr` respectively.
 
 Instrumenting `main()` is simple. Anywhere we find `args`, replace this with `cfg` since we put all of the `argparse` arguments at the top level. For example, `args.batch_size` becomes `cfg.batch_size`:
 ```python
@@ -179,7 +180,8 @@ scheduler = StepLR(step_size=cfg.steplr.step_size,
                        optimizer=optimizer
  ```       
  This method for instantiation is the least invasive to the original code, but it is also the least flexible and highly verbose. Check out the [Intermediate Tutorial] for a better approach that will allow us to hotswap optimizers and schedulers, all while writing less code.
-
+ 
+***
 ### Running with Hydra
 
 ```bash
@@ -213,6 +215,7 @@ $ python mnist_00.py -m epochs=1 dry_run=True adadelta.lr="0.001,0.01, 0.1"
 
 `Note:` these jobs can be dispatched to different resources and run in parallel or scheduled to run serially (by default). More info on multirun: [Hydra Multirun]. Hydra can use different hyperparameter search tools as well. See: [Hydra Ax plugin] and [Hydra Nevergrad plugin].
 
+***
 ### Summary
 In this tutorial, we demonstrated the path of least resistance to configuring your existing PyTorch code with Hydra. The main benefits we get from the 'Basic' level are:
 - No more boilerplate `argparse` taking up precious linecount
