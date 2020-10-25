@@ -2,6 +2,10 @@
 We want to make contributing to this project as easy and transparent as
 possible.
 
+## Linting / Formatting
+Please download the formatting / linting requirements: `pip install -r requirements/dev.txt`.
+Please install the pre-commit config for this environment: `pre-commit install`.
+
 ## Pull Requests
 We actively welcome your pull requests.
 
