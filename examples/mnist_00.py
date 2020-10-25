@@ -1,46 +1,41 @@
 from __future__ import print_function
-import argparse
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torchvision import datasets, transforms
+from torch.optim import Adadelta
 from torch.optim.lr_scheduler import StepLR
 
-###### Hydra Block ######
-from typing import List, Any
-from omegaconf import MISSING
+###### HYDRA BLOCK ######
 import hydra
 from hydra.core.config_store import ConfigStore
+from typing import List, Any
+from omegaconf import MISSING
 from dataclasses import dataclass
 
-# config schema imports
+# structured config imports
 from config.torch.optim import AdadeltaConf
 from config.torch.optim.lr_scheduler import StepLRConf
 
 @dataclass
-class ExportedArgparseArgs:
-    epochs: int = 14
+class MNISTConf:
     batch_size: int = 64
     test_batch_size: int = 1000
+    epochs: int = 14
     no_cuda: bool = False
-    save_model: bool = False
     dry_run: bool = False
-    log_interval: int = 10
     seed: int = 1
+    log_interval: int = 10
+    save_model: bool = False
     checkpoint_name: str = 'unnamed.pt'
-
-@dataclass
-class MNISTConf:
-    args: ExportedArgparseArgs = ExportedArgparseArgs()
-    optim: Any = AdadeltaConf()
-    scheduler: Any = StepLRConf(step_size=1)
-
+    adadelta: Any = AdadeltaConf()
+    steplr: Any = StepLRConf(step_size=1) # we pass a default for step_size since it is required, but missing a default in PyTorch (and consequently in hydra-torch)
 
 cs = ConfigStore.instance()
 cs.store(name="config", node=MNISTConf)
 
-###### / Hydra Block ######
+###### / HYDRA BLOCK ######
 
 class Net(nn.Module):
     def __init__(self):
@@ -105,14 +100,14 @@ def test(model, device, test_loader):
 
 
 @hydra.main(config_name='config')
-def main(cfg):
+def main(cfg): # DIFF
     print(cfg.pretty())
-    use_cuda = not cfg.args.no_cuda and torch.cuda.is_available()
-    torch.manual_seed(cfg.args.seed)
+    use_cuda = not cfg.no_cuda and torch.cuda.is_available() # DIFF 
+    torch.manual_seed(cfg.seed) # DIFF
     device = torch.device("cuda" if use_cuda else "cpu")
 
-    train_kwargs = {'batch_size': cfg.args.batch_size}
-    test_kwargs = {'batch_size': cfg.args.test_batch_size}
+    train_kwargs = {'batch_size': cfg.batch_size} # DIFF
+    test_kwargs = {'batch_size': cfg.test_batch_size} # DIFF
     if use_cuda:
         cuda_kwargs = {'num_workers': 1,
                        'pin_memory': True,
@@ -120,29 +115,36 @@ def main(cfg):
         train_kwargs.update(cuda_kwargs)
         test_kwargs.update(cuda_kwargs)
 
-    #transform=transforms.Compose([
-    #    transforms.ToTensor(),
-    #    transforms.Normalize((0.1307,), (0.3081,))
-    #    ])
-    #dataset1 = datasets.MNIST('../data', train=True, download=True,
-    #                   transform=transform)
-    #dataset2 = datasets.MNIST('../data', train=False,
-    #                   transform=transform)
-    #train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
-    #test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
+    transform=transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+        ])
+    dataset1 = datasets.MNIST('../data', train=True, download=True,
+                       transform=transform)
+    dataset2 = datasets.MNIST('../data', train=False,
+                       transform=transform)
+    train_loader = torch.utils.data.DataLoader(dataset1,**train_kwargs)
+    test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
     model = Net().to(device)
-    # use hydra.utils.instantiate to instantiate the optimizer and the scheduler:
-    optimizer = hydra.utils.instantiate(cfg.optim, params=model.parameters())
-    scheduler = hydra.utils.instantiate(cfg.scheduler, optimizer=optimizer)
 
-    for epoch in range(1, cfg.args.epochs + 1):
-        train(cfg.args, model, device, train_loader, optimizer, epoch)
+    optimizer = Adadelta(lr=cfg.adadelta.lr,
+                         rho=cfg.adadelta.rho,
+                         eps=cfg.adadelta.eps,
+                         weight_decay=cfg.adadelta.weight_decay,
+                         params=model.parameters()) # DIFF
+    scheduler = StepLR(step_size=cfg.steplr.step_size,
+                       gamma=cfg.steplr.gamma,
+                       last_epoch=cfg.steplr.last_epoch,
+                       optimizer=optimizer) # DIFF
+
+    for epoch in range(1, cfg.epochs + 1): # DIFF
+        train(cfg, model, device, train_loader, optimizer, epoch) # DIFF
         test(model, device, test_loader)
         scheduler.step()
 
-    if cfg.args.save_model:
-        torch.save(model.state_dict(), cfg.args.checkpoint_name)
+    if cfg.save_model: # DIFF
+        torch.save(model.state_dict(), cfg.checkpoint_name) # DIFF
 
 
 if __name__ == '__main__':
