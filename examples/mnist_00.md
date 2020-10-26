@@ -29,50 +29,57 @@ Although this tutorial is aimed at being self-contained, taking a look through H
 ***
 ## The 'HYDRA BLOCK'
 
-For clarity in this tutorial, as we modify the [PyTorch MNIST example], will make the diffs explicit. Most of the changes we introduce will be at the top of the file within the commented `##### HYDRA BLOCK #####`, though in practice much of this block could reside in its own concise imported file.
+For clarity, as we modify the [PyTorch MNIST example], we will make the diffs explicit. Most of the changes we introduce will be at the top of the file within the commented `##### HYDRA BLOCK #####`, though in practice much of this block could reside in its own concise imported file.
 
 ### Imports
 ```python
 import hydra
-from typing import List, Any
-from omegaconf import MISSING
-from dataclasses import dataclass
 from hydra.core.config_store import ConfigStore
+from dataclasses import dataclass
 
-# config schema imports
+# hydra-torch structured config imports
 from config.torch.optim import AdadeltaConf
 from config.torch.optim.lr_scheduler import StepLRConf
 ```
 
 There are two areas in our Hydra-specific imports. First, since we define configs in this file, we need access to the following:
-- typing from both `typing` and `omegaconf`
-- the `dataclass` decorator (for structured configs)
 - the `ConfigStore`
+- the `dataclass` decorator (for structured configs)
 
-**[OmegaConf]** is an external library that Hydra is built around. Every config object is a datastructure defined by OmegaConf. For our purposes, we use it to specify typing and special constants such as [`MISSING`] when there is no value specified.
+**The [ConfigStore]** is a singleton object which all config objects are registered to. This gives Hydra access to our structured config definitions *once they're registered*.
 
-**[Structured Configs][hydra structured configs tutorial]** are dataclasses that Hydra can use to compose complex config objects. We can think of them as templates or 'starting points' for our configs. Each `*Conf` file provided by `hydra-torch` is a structured config.
+**[Structured Configs][hydra structured configs tutorial]** are dataclasses that Hydra can use to compose complex config objects. We can think of them as templates or 'starting points' for our configs. Each `*Conf` file provided by `hydra-torch` is a structured config. See an example of one below:
 
-**The [ConfigStore]** is a singleton object which all config objects are registered to. This gives Hydra access to our structured config definitions.
+```python
+# the structured config for Adadelta imported from config.torch.optim:
+@dataclass
+class AdadeltaConf:
+    _target_: str = "torch.optim.adadelta.Adadelta"
+    params: Any = MISSING
+    lr: Any = 1.0
+    rho: Any = 0.9
+    eps: Any = 1e-06
+    weight_decay: Any = 0
+```
 
-#### Config Schema
-*our config templates - providing type checking and good defaults*
+> **NOTE:** [`MISSING`] is a special constant used to indicate there is no default value specified.
 
-Second, we import two [config schema] from `hydra-torch`. Think of config schema as recommended templates for commonly used configurations. `hydra-torch` provides config schema for a large subset of common PyTorch classes. In the basic tutorial, we only consider the schema for the PyTorch classes:
+The second set of imports correspond to two components in the training pipeline of the [PyTorch MNIST example]:
+
 - `Adadelta` which resides in `torch.optim`
 - `StepLR` which resides in `torch.optim.lr_scheduler`
 
-Note that the naming convention for the import heirarchy mimics that of `torch`. We correspondingly import the following config schema:
+Note that the naming convention for the import hierarchy mimics that of `torch`. We correspondingly import the following structured configs:
 - `AdadeltaConf` from `config.torch.optim`
 - `StepLRConf` from `config.torch.optim.lr_scheduler`
 
-We try to preserve the naming convention of using the suffix `-Conf` at all times to distinguish the config schema class from the class of the object that is to be configured.
+Generally, we follow the naming convention of applying the suffix `-Conf` to distinguish the structured config class from the class of the object to be configured.
 
 ***
 ### Top Level Config
-After importing two pre-defined config schema for components in our training pipeline, the optimizer and scheduler, we still need a "top level" config to merge everything. We can call this config class `MNISTConf`. You will notice that this class is nothing more than a python `dataclass` and corresponds to, you guessed it, a *config schema*.
+After importing two pre-defined structured configs for components in our training pipeline, the optimizer and scheduler, we still need a "top level" config to merge everything. We can call this config class `MNISTConf`. You will notice that this class is nothing more than a python `dataclass` and corresponds to, you guessed it, a *structured config*.
 
-The top level config is application specific and thus is not provided  by `hydra-torch`.
+> **NOTE:** The top level config is application specific and thus is not provided  by `hydra-torch`.
 
 We can start this out by including the configs we know we will need for the optimizer (`Adadelta`) and scheduler (`StepLR`):
 ```python
@@ -84,7 +91,7 @@ class MNISTConf:
 ```
 Notice that for `StepLRConf()` we need to pass `step_size=1` when we initialize because it's default value is `MISSING`.
 ```python
-# the class imported from: config.torch.optim.lr_scheduler:
+# the structured config imported from hydra-torch in config.torch.optim.lr_scheduler
 @dataclass
 class StepLRConf:
     _target_: str = "torch.optim.lr_scheduler.StepLR"
@@ -97,7 +104,7 @@ class StepLRConf:
 Later, we will specify the optimizer (also default `MISSING`) as a passed through argument when the actual `StepLR` object is instantiated.
 
 ### Adding the Top Level Config to the ConfigStore
-Very simply, we add the top-level config class `MNISTConf` to the `ConfigStore` in two lines:
+Very simply, but crucially, we add the top-level config class `MNISTConf` to the `ConfigStore` in two lines:
 ```python
 cs = ConfigStore.instance()
 cs.store(name="mnistconf", node=MNISTConf)
@@ -105,7 +112,7 @@ cs.store(name="mnistconf", node=MNISTConf)
 The name `mnistconf` will be passed to the `@hydra` decorator when we get to `main()`.
 
 ***
-### 👋 Parting with Argparse
+### Parting with Argparse
 
 Now we're starting to realize our relationship with `argparse` isn't as serious as we thought it was. Although `argparse` is powerful, we can take it a step further. In the process we hope to introduce greater organization and free our primary file from as much boilerplate as possible.
 
@@ -160,7 +167,7 @@ class MNISTConf:
 ```
 > **NOTE:** `learning_rate` and `gamma` are included in `AdadeltaConf()` and so they were omitted from the top-level args.
 
-This works, but can feel a bit flat and disorganized (much like `argparse` args can be). Don't worry, we will remedy this later in the tutorials. Note, we also sacrifice `help` strings. This is a planned feature, but not supported in Hydra just yet.
+This works, but can feel a bit flat and disorganized (much like `argparse` args can be). Don't worry, we will remedy this later in the tutorial series. Note, we also sacrifice `help` strings. This is a planned feature, but not supported in Hydra just yet.
 
 Now our `argparse` args are at the same level as our optimizer and scheduler configs. We will remove `lr` and `gamma` since they are already present within the optimizer config `AdadeltaConf`.
 ***
@@ -198,7 +205,7 @@ Still inside `main()`, we want to draw attention to two slightly special cases b
                          weight_decay=cfg.adadelta.weight_decay,
                          params=model.parameters()
  ```
-In this case, the `optimizer` has one argument that is not a part of our config -- `params`. If it wasn't obvious, this needs to be passed from the initialized `Net()` called model. In the config schema that initialized `cfg.adadelta`, `params` is default to `MISSING`. The same is true of the `optimizer` field in `StepLRConf`.
+In this case, the `optimizer` has one argument that is not a part of our config -- `params`. If it wasn't obvious, this needs to be passed from the initialized `Net()` called model. In the structured config that initialized `cfg.adadelta`, `params` is default to `MISSING`. The same is true of the `optimizer` field in `StepLRConf`.
 
 ```python
 scheduler = StepLR(step_size=cfg.steplr.step_size,
@@ -209,7 +216,7 @@ scheduler = StepLR(step_size=cfg.steplr.step_size,
  This method for instantiation is the least invasive to the original code, but it is also the least flexible and highly verbose. Check out the [Intermediate Tutorial] for a better approach that will allow us to hotswap optimizers and schedulers, all while writing less code.
 
 ***
-## 🏃 Running with Hydra
+## Running with Hydra
 
 ```bash
 $ python 00_minst.py
@@ -240,15 +247,15 @@ It can be useful to test multirun outputs by passing `dry_run=True` and setting 
 $ python mnist_00.py -m epochs=1 dry_run=True adadelta.lr="0.001,0.01, 0.1"
 ```
 
-`Note:` these jobs can be dispatched to different resources and run in parallel or scheduled to run serially (by default). More info on multirun: [Hydra Multirun]. Hydra can use different hyperparameter search tools as well. See: [Hydra Ax plugin] and [Hydra Nevergrad plugin].
+> **NOTE:** these jobs can be dispatched to different resources and run in parallel or scheduled to run serially (by default). More info on multirun: [Hydra Multirun]. Hydra can use different hyperparameter search tools as well. See: [Hydra Ax plugin] and [Hydra Nevergrad plugin].
 
 ***
 ## Summary
 In this tutorial, we demonstrated the path of least resistance to configuring your existing PyTorch code with Hydra. The main benefits we get from the 'Basic' level are:
-- No more boilerplate `argparse` taking up precious linecount
+- No more boilerplate `argparse` taking up precious linecount.
 - All training related arguments (`epochs`, `save_model`, etc.)  are now configurable via Hydra.
 - **All** optimizer/scheduler (`Adadelta`/`StepLR`) arguments are exposed for configuration
-  -- extending beyond only the ones the user wrote argparse code for
+  -- extending beyond only the ones the user wrote argparse code for.
 - We have offloaded the book-keeping of compatible `argparse` code to Hydra via `hydra-torch` which runs tests ensuring all arguments track the API for the correct version of `pytorch`.
 
 However, there are some limitations in our current strategy that the [Intermediate Tutorial] will address. Namely:
