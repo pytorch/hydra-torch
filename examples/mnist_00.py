@@ -9,10 +9,10 @@ from torch.optim.lr_scheduler import StepLR
 
 ###### HYDRA BLOCK ######
 import hydra
-from dataclasses import dataclass
 from hydra.core.config_store import ConfigStore
+from dataclasses import dataclass
 
-# structured config imports
+# hydra-torch structured config imports
 from config.torch.optim import AdadeltaConf
 from config.torch.optim.lr_scheduler import StepLRConf
 
