@@ -11,10 +11,20 @@ from torch.optim.lr_scheduler import StepLR
 import hydra
 from hydra.core.config_store import ConfigStore
 from dataclasses import dataclass
+from typing import Any
 
 # hydra-torch structured config imports
 from config.torch.optim import AdadeltaConf
 from config.torch.optim.lr_scheduler import StepLRConf
+
+@dataclass
+class MNISTNetConf:
+    conv1_out_channels: int = 32
+    conv2_out_channels: int = 64
+    maxpool1_kernel_size: int = 2
+    dropout1_prob: float = 0.25
+    dropout2_prob: float = 0.5
+    fc_hidden_features: int = 128
 
 
 @dataclass
@@ -28,21 +38,13 @@ class MNISTConf:
     log_interval: int = 10
     save_model: bool = False
     checkpoint_name: str = "unnamed.pt"
-    model: Any = MNISTNetConf()
+    model: MNISTNetConf = MNISTNetConf()
     optim: Any = AdadeltaConf()
     scheduler: Any = StepLRConf(
         step_size=1
     )  # we pass a default for step_size since it is required, but missing a default in PyTorch (and consequently in hydra-torch)
 
 
-@dataclass
-class MNISTNetConf:
-    conv1_out_channels: int = 32
-    conv2_out_channels: int = 64
-    maxpool1_kernel: int = 2
-    dropout1_prob: float = 0.25
-    dropout2_prob: float = 0.5
-    fc_hidden_features: int = 128
 
 
 cs = ConfigStore.instance()
@@ -60,27 +62,28 @@ class Net(nn.Module):
         )
         self.dropout1 = nn.Dropout2d(cfg.model.dropout1_prob)
         self.dropout2 = nn.Dropout2d(cfg.model.dropout2_prob)
+        self.maxpool1 = nn.MaxPool2d(cfg.model.maxpool1_kernel_size)
 
         conv_out_shape = self._compute_conv_out_shape(input_shape)
-        linear_in_shape = torch.prod(conv_out_shape)
+        linear_in_shape = conv_out_shape.numel()
 
         self.fc1 = nn.Linear(linear_in_shape, cfg.model.fc_hidden_features)
-        self.fc2 = nn.Linear(cfg.model.fc_hidden_features, torch.prod(output_shape))
+        self.fc2 = nn.Linear(cfg.model.fc_hidden_features, output_shape[1])
 
     def _compute_conv_out_shape(self, input_shape):
-        dummy_input = torch.zeros(input_shape)
+        dummy_input = torch.zeros(input_shape).unsqueeze(0)
         with torch.no_grad():
             x = self.conv1(dummy_input)
             x = self.conv2(x)
-            dummy_output = F.max_pool2d(x, cfg.model.maxpool1_kernel)
-        return dummy_output.shape()
+            dummy_output = self.maxpool1(x) 
+        return dummy_output.shape
 
     def forward(self, x):
         x = self.conv1(x)
         x = F.relu(x)
         x = self.conv2(x)
         x = F.relu(x)
-        x = F.max_pool2d(x, cfg.model.maxpool1_kernel)
+        x = self.maxpool1(x) # DIFF
         x = self.dropout1(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
@@ -164,19 +167,21 @@ def main(cfg):  # DIFF
     train_loader = torch.utils.data.DataLoader(dataset1, **train_kwargs)
     test_loader = torch.utils.data.DataLoader(dataset2, **test_kwargs)
 
-    model = Net().to(device)
+    input_shape = (1, 28, 28)
+    output_shape = (1, 10)
+    model = Net(input_shape, output_shape, cfg).to(device)
 
     optimizer = Adadelta(
-        lr=cfg.adadelta.lr,
-        rho=cfg.adadelta.rho,
-        eps=cfg.adadelta.eps,
-        weight_decay=cfg.adadelta.weight_decay,
+        lr=cfg.optim.lr,
+        rho=cfg.optim.rho,
+        eps=cfg.optim.eps,
+        weight_decay=cfg.optim.weight_decay,
         params=model.parameters(),
     )  # DIFF
     scheduler = StepLR(
-        step_size=cfg.steplr.step_size,
-        gamma=cfg.steplr.gamma,
-        last_epoch=cfg.steplr.last_epoch,
+        step_size=cfg.scheduler.step_size,
+        gamma=cfg.scheduler.gamma,
+        last_epoch=cfg.scheduler.last_epoch,
         optimizer=optimizer,
     )  # DIFF
 
