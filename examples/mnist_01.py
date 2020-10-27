@@ -39,6 +39,7 @@ class MNISTConf:
 class MNISTNetConf:
     conv1_out_channels: int = 32
     conv2_out_channels: int = 64
+    maxpool1_kernel: int = 2
     dropout1_prob: float = 0.25
     dropout2_prob: float = 0.5
     fc_hidden_features: int = 128
@@ -51,7 +52,7 @@ cs.store(name="mnistconf", node=MNISTConf)
 
 
 class Net(nn.Module):
-    def __init__(self):
+    def __init__(self, input_shape, output_shape, cfg):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, cfg.model.conv1_out_channels, 3, 1)
         self.conv2 = nn.Conv2d(
@@ -59,15 +60,27 @@ class Net(nn.Module):
         )
         self.dropout1 = nn.Dropout2d(cfg.model.dropout1_prob)
         self.dropout2 = nn.Dropout2d(cfg.model.dropout2_prob)
-        self.fc1 = nn.Linear(9216, cfg.model.fc_hidden_features)
-        self.fc2 = nn.Linear(cfg.model.fc_hidden_features, 10)
+
+        conv_out_shape = self._compute_conv_out_shape(input_shape)
+        linear_in_shape = torch.prod(conv_out_shape)
+
+        self.fc1 = nn.Linear(linear_in_shape, cfg.model.fc_hidden_features)
+        self.fc2 = nn.Linear(cfg.model.fc_hidden_features, torch.prod(output_shape))
+
+    def _compute_conv_out_shape(self, input_shape):
+        dummy_input = torch.zeros(input_shape)
+        with torch.no_grad():
+            x = self.conv1(dummy_input)
+            x = self.conv2(x)
+            dummy_output = F.max_pool2d(x, cfg.model.maxpool1_kernel)
+        return dummy_output.shape()
 
     def forward(self, x):
         x = self.conv1(x)
         x = F.relu(x)
         x = self.conv2(x)
         x = F.relu(x)
-        x = F.max_pool2d(x, 2)
+        x = F.max_pool2d(x, cfg.model.maxpool1_kernel)
         x = self.dropout1(x)
         x = torch.flatten(x, 1)
         x = self.fc1(x)
