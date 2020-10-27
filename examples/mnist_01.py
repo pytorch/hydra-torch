@@ -9,6 +9,7 @@ from torch.optim.lr_scheduler import StepLR
 
 ###### HYDRA BLOCK ######
 import hydra
+from hydra.utils import instantiate
 from hydra.core.config_store import ConfigStore
 from dataclasses import dataclass
 from typing import Any
@@ -171,27 +172,16 @@ def main(cfg):  # DIFF
     output_shape = (1, 10)
     model = Net(input_shape, output_shape, cfg).to(device)
 
-    optimizer = Adadelta(
-        lr=cfg.optim.lr,
-        rho=cfg.optim.rho,
-        eps=cfg.optim.eps,
-        weight_decay=cfg.optim.weight_decay,
-        params=model.parameters(),
-    )  # DIFF
-    scheduler = StepLR(
-        step_size=cfg.scheduler.step_size,
-        gamma=cfg.scheduler.gamma,
-        last_epoch=cfg.scheduler.last_epoch,
-        optimizer=optimizer,
-    )  # DIFF
+    optimizer = instantiate(cfg.optim, params=model.parameters())  # DIFF
+    scheduler = instantiate(cfg.scheduler, optimizer=optimizer)  # DIFF
 
-    for epoch in range(1, cfg.epochs + 1):  # DIFF
-        train(cfg, model, device, train_loader, optimizer, epoch)  # DIFF
+    for epoch in range(1, cfg.epochs + 1):  
+        train(cfg, model, device, train_loader, optimizer, epoch)  
         test(model, device, test_loader)
         scheduler.step()
 
-    if cfg.save_model:  # DIFF
-        torch.save(model.state_dict(), cfg.checkpoint_name)  # DIFF
+    if cfg.save_model: 
+        torch.save(model.state_dict(), cfg.checkpoint_name) 
 
 
 if __name__ == "__main__":
