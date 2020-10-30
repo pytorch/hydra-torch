@@ -30,7 +30,7 @@ jobs:
       - linux:
           py_version: << parameters.py_version >>
       - run:
-          name: Linting/Formatting/Testing Hydra Torch Configs 
+          name: Linting/Testing Hydra Torch Configs 
           command: |
             export PATH="$HOME/miniconda3/envs/hypytorch/bin:$PATH"
             export NOX_PYTHON_VERSIONS=<< parameters.py_version >>
