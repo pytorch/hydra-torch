@@ -16,7 +16,7 @@ class AdadeltaConf:
     eps: Any = 1e-06
     weight_decay: Any = 0
 ```
-###### (once pytorch updates type annotations, these will automatically change from `Any` -> `int/float`)
+###### (once pytorch updates type annotations, these will automatically change from `Any` -> `Int/Float`)
 
 ### Getting Started:
 Take a look at our tutorial series:
