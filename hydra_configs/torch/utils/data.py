@@ -7,7 +7,7 @@ import importlib
 
 
 def override_imports_for_legacy():
-    if version.parse(torch.__version__) < version.parse("1.6.0"):
+    if version.parse(torch.__version__) < version.parse("1.7.0"):
         module = importlib.import_module("hydra_configs.torch_v160.utils.data")
         globals().update(
             {n: getattr(module, n) for n in module.__all__}
