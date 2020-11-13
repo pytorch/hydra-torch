@@ -6,15 +6,17 @@
 # isort:skip_file
 # flake8: noqa
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from omegaconf import MISSING
 from typing import Any
 
 
 @dataclass
-class SparseAdamConf:
-    _target_: str = "torch.optim.sparse_adam.SparseAdam"
+class ASGDConf:
+    _target_: str = "torch.optim.asgd.ASGD"
     params: Any = MISSING
-    lr: Any = 0.001
-    betas: Any = (0.9, 0.999)
-    eps: Any = 1e-08
+    lr: Any = 0.01
+    lambd: Any = 0.0001
+    alpha: Any = 0.75
+    t0: Any = 1000000.0
+    weight_decay: Any = 0

@@ -6,17 +6,18 @@
 # isort:skip_file
 # flake8: noqa
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from omegaconf import MISSING
 from typing import Any
 
 
 @dataclass
-class SGDConf:
-    _target_: str = "torch.optim.sgd.SGD"
+class RMSpropConf:
+    _target_: str = "torch.optim.rmsprop.RMSprop"
     params: Any = MISSING
-    lr: Any = MISSING  # _RequiredParameter
-    momentum: Any = 0
-    dampening: Any = 0
+    lr: Any = 0.01
+    alpha: Any = 0.99
+    eps: Any = 1e-08
     weight_decay: Any = 0
-    nesterov: Any = False
+    momentum: Any = 0
+    centered: Any = False

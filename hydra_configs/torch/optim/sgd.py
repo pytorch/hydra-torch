@@ -6,17 +6,17 @@
 # isort:skip_file
 # flake8: noqa
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from omegaconf import MISSING
 from typing import Any
 
 
 @dataclass
-class AdagradConf:
-    _target_: str = "torch.optim.adagrad.Adagrad"
+class SGDConf:
+    _target_: str = "torch.optim.sgd.SGD"
     params: Any = MISSING
-    lr: Any = 0.01
-    lr_decay: Any = 0
+    lr: Any = MISSING  # _RequiredParameter
+    momentum: Any = 0
+    dampening: Any = 0
     weight_decay: Any = 0
-    initial_accumulator_value: Any = 0
-    eps: Any = 1e-10
+    nesterov: Any = False
