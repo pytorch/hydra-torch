@@ -1,19 +1,6 @@
 from dataclasses import dataclass
 from omegaconf import MISSING
 from typing import Any
-import torch
-from packaging import version
-import importlib
-
-
-def override_imports_for_legacy():
-    if version.parse(torch.__version__) < version.parse("1.7.0"):
-        module = importlib.import_module("hydra_configs.torch_v160.utils.data")
-        globals().update(
-            {n: getattr(module, n) for n in module.__all__}
-            if hasattr(module, "__all__")
-            else {k: v for (k, v) in module.__dict__.items() if not k.startswith("_")}
-        )
 
 
 @dataclass
@@ -38,4 +25,9 @@ class DataLoaderConf:
     generator: Any = None
 
 
-override_imports_for_legacy()
+# module = pkg_utils.override_imports_for_legacy(__name__) or sys.modules[__name__]
+# globals().update(
+#    {n: getattr(module, n) for n in module.__all__}
+#    if hasattr(module, "__all__")
+#    else {k: v for (k, v) in module.__dict__.items() if not k.startswith("_")}
+# )
