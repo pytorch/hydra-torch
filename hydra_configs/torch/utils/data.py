@@ -1,6 +1,8 @@
+import sys
 from dataclasses import dataclass
 from omegaconf import MISSING
 from typing import Any
+from hydra_configs import pkg_utils
 
 
 @dataclass
@@ -25,9 +27,9 @@ class DataLoaderConf:
     generator: Any = None
 
 
-# module = pkg_utils.override_imports_for_legacy(__name__) or sys.modules[__name__]
-# globals().update(
-#    {n: getattr(module, n) for n in module.__all__}
-#    if hasattr(module, "__all__")
-#    else {k: v for (k, v) in module.__dict__.items() if not k.startswith("_")}
-# )
+module = pkg_utils.override_imports_for_legacy(__name__) or sys.modules[__name__]
+globals().update(
+    {n: getattr(module, n) for n in module.__all__}
+    if hasattr(module, "__all__")
+    else {k: v for (k, v) in module.__dict__.items() if not k.startswith("_")}
+)
