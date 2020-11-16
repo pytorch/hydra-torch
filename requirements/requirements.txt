@@ -1,2 +1,3 @@
 hydra-configen>=0.9.0.dev4
 torch
+packaging

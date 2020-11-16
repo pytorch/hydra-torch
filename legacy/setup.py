@@ -3,9 +3,10 @@
 from setuptools import find_namespace_packages, setup
 
 setup(
-    name="hydra-torch-config-legacy",
+    name="hydra-torch-configs-legacy",
     version="0.9",
-    packages=find_namespace_packages(where=".", include=["hydra_configs*"]),
+    packages=find_namespace_packages(where="./legacy", include=["hydra_configs*"]),
+    package_dir={"": "legacy"},
     namespace_packages=["hydra_configs"],
     author=["Omry Yadan", "Rosario Scalise"],
     author_email=["omry@fb.com", "rosario@cs.uw.edu"],
