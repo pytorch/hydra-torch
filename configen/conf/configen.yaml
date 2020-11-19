@@ -11,7 +11,7 @@ configen:
     # isort:skip_file
     # flake8: noqa
 
-  module_path_pattern: 'config/{{module_path}}.py'
+  module_path_pattern: 'hydra_configs/{{module_path}}.py'
 
   # list of modules to generate configs for
   modules:
@@ -83,3 +83,8 @@ configen:
         - CyclicLR
         - CosineAnnealingWarmRestarts
         - OneCycleLR
+
+    - name: torch.utils.data
+      classes:
+          # Data Loading utils
+          - DataLoader
