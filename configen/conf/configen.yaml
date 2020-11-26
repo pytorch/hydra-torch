@@ -11,7 +11,7 @@ configen:
     # isort:skip_file
     # flake8: noqa
 
-  module_path_pattern: 'config/{{module_path}}.py'
+  module_path_pattern: 'hydra_configs/{{module_path}}.py'
 
   # list of modules to generate configs for
   modules:
@@ -38,7 +38,7 @@ configen:
     - name: torch.optim.sparse_adam
       # for each module, a list of classes
       classes:
-        - SparseAdam 
+        - SparseAdam
 
     - name: torch.optim.adamax
       # for each module, a list of classes
@@ -48,27 +48,27 @@ configen:
     - name: torch.optim.asgd
       # for each module, a list of classes
       classes:
-        - ASGD 
+        - ASGD
 
     - name: torch.optim.sgd
       # for each module, a list of classes
       classes:
-        - SGD 
+        - SGD
 
     - name: torch.optim.rprop
       # for each module, a list of classes
       classes:
-        - Rprop 
+        - Rprop
 
     - name: torch.optim.rmsprop
       # for each module, a list of classes
       classes:
-        - RMSprop 
+        - RMSprop
 
     - name: torch.optim.lbfgs
       # for each module, a list of classes
       classes:
-        - LBFGS 
+        - LBFGS
 
     - name: torch.optim.lr_scheduler
       classes:
@@ -83,3 +83,8 @@ configen:
         - CyclicLR
         - CosineAnnealingWarmRestarts
         - OneCycleLR
+
+    - name: torch.utils.data
+      classes:
+          # Data Loading utils
+          - DataLoader

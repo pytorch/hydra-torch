@@ -56,49 +56,49 @@ model = nn.Linear(1, 1)
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.ASGD(lr=0.1, params=model.parameters()),
-            id="ASGD",
+            id="ASGDConf",
         ),
         pytest.param(
             "LBFGS",
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.LBFGS(lr=0.1, params=model.parameters()),
-            id="LBFGS",
+            id="LBFGSConf",
         ),
         pytest.param(
             "RMSprop",
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.RMSprop(lr=0.1, params=model.parameters()),
-            id="RMSprop",
+            id="RMSpropConf",
         ),
         pytest.param(
             "Rprop",
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.Rprop(lr=0.1, params=model.parameters()),
-            id="Rprop",
+            id="RpropConf",
         ),
         pytest.param(
             "SGD",
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.SGD(lr=0.1, params=model.parameters()),
-            id="SGD",
+            id="SGDConf",
         ),
         pytest.param(
             "SparseAdam",
             {"lr": 0.1},
             {"params": model.parameters()},
             optim.SparseAdam(lr=0.1, params=model.parameters()),
-            id="SparseAdam",
+            id="SparseAdamConf",
         ),
     ],
 )
 def test_instantiate_classes(
     classname: str, cfg: Any, passthrough_kwargs: Any, expected: Any
 ) -> None:
-    full_class = f"config.torch.optim.{classname}Conf"
+    full_class = f"hydra_configs.torch.optim.{classname}Conf"
     schema = OmegaConf.structured(get_class(full_class))
     cfg = OmegaConf.merge(schema, cfg)
     obj = instantiate(cfg, **passthrough_kwargs)
