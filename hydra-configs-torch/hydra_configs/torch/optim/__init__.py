@@ -11,11 +11,9 @@ from .sgd import SGDConf
 from .rprop import RpropConf
 from .rmsprop import RMSpropConf
 
-# from .optimizer import OptimizerConf
 from .lbfgs import LBFGSConf
 from . import lr_scheduler
 
-# from . import swa_utils
 
 del adadelta
 del adagrad
@@ -27,5 +25,4 @@ del asgd
 del sgd
 del rprop
 del rmsprop
-# del optimizer
 del lbfgs
