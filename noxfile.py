@@ -13,7 +13,10 @@ SILENT = VERBOSE == "0"
 # Linted dirs/files:
 lint_targets = "."
 # Add additional config projects here:
-test_targets = ["hydra-configs-torch", "hydra-configs-torchvision"]
+test_targets = [
+    "./hydra-configs-torch",
+    "./hydra-configs-torchvision",
+]
 
 
 def setup_dev_env(session):
