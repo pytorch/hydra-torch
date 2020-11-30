@@ -11,7 +11,12 @@ VERBOSE = os.environ.get("VERBOSE", "0")
 SILENT = VERBOSE == "0"
 
 # Linted dirs/files:
-targets = "."
+lint_targets = "."
+# Add additional config projects here:
+test_targets = [
+    "./hydra-configs-torch",
+    "./hydra-configs-torchvision",
+]
 
 
 def setup_dev_env(session):
@@ -32,12 +37,12 @@ def setup_dev_env(session):
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def lint(session):
     setup_dev_env(session)
-    session.run("black", *targets, "--check")
-    session.run("flake8", "--config", ".flake8", *targets)
+    session.run("black", *lint_targets, "--check")
+    session.run("flake8", "--config", ".flake8", *lint_targets)
 
 
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def tests(session):
     setup_dev_env(session)
-    session.install(".")  # install config package
-    session.run("pytest", "tests")
+    session.install(*test_targets)  # install config packages
+    session.run("pytest", *test_targets)

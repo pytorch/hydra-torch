@@ -12,9 +12,9 @@ with pathlib.Path("requirements/requirements.txt").open() as requirements_txt:
 
 
 setup(
-    name="hydra-torch-config",
+    name="hydra-torch",
     version="0.9",
-    packages=find_namespace_packages(include=["config.*"]),
+    packages=find_namespace_packages(include=["hydra_configs.*"]),
     author=["Omry Yadan", "Rosario Scalise"],
     author_email=["omry@fb.com", "rosario@cs.uw.edu"],
     url="http://github.com/pytorch/hydra-torch",

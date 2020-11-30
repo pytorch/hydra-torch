@@ -1,2 +1,2 @@
 hydra-configen>=0.9.0.dev4
-torch
+torch==1.6.0
