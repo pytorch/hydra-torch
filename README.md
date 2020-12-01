@@ -4,6 +4,12 @@ Configuration classes enabling type-safe PyTorch configuration for Hydra apps.
 
 The config dataclasses are generated using [configen](https://github.com/facebookresearch/hydra/tree/master/tools/configen), check it out if you want to generate config dataclasses for your own project.
 
+### Install:
+```
+# For now, please obtain through github. Soon, versioned (per-project) dists will be on PyPI.
+pip install git+https://github.com/pytorch/hydra-torch
+```
+
 ### Example config:
 Here is one of many configs available. Notice it uses the defaults defined in the torch function signatures:
 ```python
@@ -17,6 +23,10 @@ class AdadeltaConf:
     weight_decay: Any = 0
 ```
 ###### (once pytorch updates type annotations, these will automatically change from `Any` -> `Int/Float`)
+
+### Install:
+```
+pip install git+f"{project} @ git+https://github.com/pytorch/hydra-torch/#subdirectory={project}"
 
 ### Getting Started:
 Take a look at our tutorial series:
