@@ -14,8 +14,7 @@ SILENT = VERBOSE == "0"
 lint_targets = "."
 # Add additional config projects here:
 test_targets = [
-    "./hydra-configs-torch",
-    "./hydra-configs-torchvision",
+    p.rstrip("\n") for p in open("hydra-configs-projects.txt", "r").readlines()
 ]
 
 
