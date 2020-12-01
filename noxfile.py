@@ -12,9 +12,10 @@ SILENT = VERBOSE == "0"
 
 # Linted dirs/files:
 lint_targets = "."
-# Add additional config projects here:
+# Test dirs (corresponds to each project having its own tests folder):
+# Note the './', this installs local packages
 test_targets = [
-    p.rstrip("\n") for p in open("hydra-configs-projects.txt", "r").readlines()
+    "./" + p.rstrip("\n") for p in open("hydra-configs-projects.txt", "r").readlines()
 ]
 
 
