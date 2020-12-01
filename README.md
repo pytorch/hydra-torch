@@ -24,10 +24,6 @@ class AdadeltaConf:
 ```
 ###### (once pytorch updates type annotations, these will automatically change from `Any` -> `Int/Float`)
 
-### Install:
-```
-pip install git+f"{project} @ git+https://github.com/pytorch/hydra-torch/#subdirectory={project}"
-
 ### Getting Started:
 Take a look at our tutorial series:
 1. [Basic Tutorial](examples/mnist_00.md)
