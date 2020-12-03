@@ -1,7 +1,12 @@
+import logging
 import os
+import random
+import shutil
+import time
 import warnings
 
 import hydra
+from omegaconf import DictConfig
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
@@ -9,110 +14,48 @@ import torch.distributed as dist
 import torchvision.models as models
 import torchvision.datasets as datasets
 import torchvision.transforms as transforms
-from torch.optim import Adam
+from torch.optim import SGD
 
-best_acc1 = 0
+logger = logging.getLogger("ImageNet")
 
 
 @hydra.main(config_name="imagenetconf")
-def main(cfg):
+def main(cfg: DictConfig):
     if cfg.seed is not None:
         random.seed(cfg.seed)
         torch.manual_seed(cfg.seed)
+        cudnn.benchmark = False
         cudnn.deterministic = True
-        warnings.warn(
-            "You have chosen to seed training. "
-            "This will turn on the CUDNN deterministic setting, "
-            "which can slow down your training considerably! "
-            "You may see unexpected behavior when restarting "
-            "from checkpoints."
-        )
     if cfg.gpu is not None:
-        warnings.warn(
-            "You have chosen a specific GPU. This will completely "
-            "disable data parallelism."
-        )
-    if cfg.dist_url == "env://" and cfg.world_size == -1:
-        cfg.world_size = int(os.environ["WORLD_SIZE"])
+        logger.info(f"Use GPU: {cfg.gpu} for training")
+    os.environ["MASTER_ADDR"] = "localhost"
+    os.environ["MASTER_PORT"] = "12345"
+    dist.init_process_group(
+        backend=cfg.dist_backend,
+        # init_method=cfg.dist_url,
+        world_size=cfg.world_size,
+        rank=cfg.gpu,
+    )
+    return
 
-    global best_acc1
-
-    if cfg.gpu is not None:
-        print("Use GPU: {} for training".format(cfg.gpu))
-
-    if cfg.distributed:
-        if cfg.dist_url == "env://" and cfg.rank == -1:
-            cfg.rank = int(os.environ["RANK"])
-        if cfg.multiprocessing_distributed:
-            cfg.rank = cfg.rank * cfg.ngpus_per_node + gpu
-        dist.init_process_group(
-            backend=cfg.dist_backend,
-            init_method=cfg.dist_url,
-            world_size=cfg.world_size,
-            rank=cfg.rank,
-        )
-    if cfg.pretrained:
-        print("=> using pre-trained model '{}'".format(cfg.arch))
-        model = models.__dict__[cfg.arch](pretrained=True)
-    else:
-        print("=> creating model '{}'".format(cfg.arch))
-        model = models.__dict__[cfg.arch]()
-
-    if not torch.cuda.is_available():
-        print("using CPU, this wil be slow")
-    elif cfg.distributed:
-        if cfg.gpu is not None:
-            torch.cuda.set_device(cfg.gpu)
-            model.cuda(cfg.gpu)
-            cfg.batch_size = int(cfg.batch_size / cfg.ngpus_per_node)
-            model = torch.nn.parallel.DistributedDataParallel(
-                model, device_ids=[cfg.gpu]
-            )
-        else:
-            model.cuda()
-            model = torch.nn.parallel.DistributedDataParallel(model)
-    elif cfg.gpu is not None:
-        torch.cuda.set_device(cfg.gpu)
-        model = model.cuda(cfg.gpu)
-    else:
-        if cfg.arch.startswith("alexnet") or cfg.arch.startswith("vgg"):
-            model.features = torch.nn.DataParallel(model.features)
-            model.cuda()
-        else:
-            model = torch.nn.DataParallel(model).cuda()
+    model = models.__dict__[cfg.arch]()
+    torch.cuda.set_device(cfg.gpu)
+    model.cuda(cfg.gpu)
+    # When using a single GPU per process and per
+    # DistributedDataParallel, we need to divide the batch size
+    # ourselves based on the total number of GPUs we have
+    cfg.batch_size = int(cfg.batch_size / cfg.world_size)
+    model = torch.nn.parallel.DistributedDataParallel(model, device_ids=[cfg.gpu])
 
     criterion = nn.CrossEntropyLoss().cuda(cfg.gpu)
-    optimizer = Adam(
-        lr=cfg.adam.lr,
-        rho=cfg.adam.rho,
-        eps=cfg.adam.eps,
-        weight_decay=cfg.adam.weight_decay,
+    optimizer = SGD(
         params=model.parameters(),
+        lr=cfg.sgd.lr,
+        lambd=cfg.sgd.lambd,
+        alpha=cfg.sgd.alpha,
+        t0=cfg.sgd.t0,
+        weight_decay=cfg.sgd.weight_decay,
     )
-
-    if cfg.resume:
-        if os.path.isfile(cfg.resume):
-            print("=> loading checkpoint '{}'".format(cfg.resume))
-            if cfg.gpu is None:
-                checkpoint = torch.load(cfg.resume)
-            else:
-                loc = "cuda:{}".format(cfg.gpu)
-                checkpoint = torch.load(cfg.resume, map_location=loc)
-            cfg.start_epoch = checkpoint["epoch"]
-            best_acc1 = checkpoint["best_acc1"]
-            if cfg.gpu is not None:
-                best_acc1 = best_acc1.to(cfg.gpu)
-            model.load_state_dict(checkpoint["state_dict"])
-            optimizer.load_state_dict(checkpoint["optimizer"])
-            print(
-                "=> loaded checkpoint '{}' (epoch {})".format(
-                    cfg.resume, checkpoint["epoch"]
-                )
-            )
-        else:
-            print("=> no checkpoint found at '{}'".format(cfg.resume))
-
-    cudnn.benchmark = True
 
     traindir = os.path.join(cfg.data, "train")
     valdir = os.path.join(cfg.data, "val")
@@ -121,7 +64,7 @@ def main(cfg):
     )
 
     train_dataset = datasets.ImageFolder(
-        train_dir,
+        traindir,
         transforms.Compose(
             [
                 transforms.RandomResizedCrop(224),
@@ -158,9 +101,9 @@ def main(cfg):
                 ]
             ),
         ),
-        batch_size=args.batch_size,
+        batch_size=cfg.batch_size,
         shuffle=False,
-        num_workers=args.workers,
+        num_workers=cfg.workers,
         pin_memory=True,
     )
 
@@ -173,25 +116,8 @@ def main(cfg):
             train_sampler.set_epoch(epoch)
         adjust_learning_rate(optimizer, epoch, cfg)
 
-        train(train_loader, model, criterion, optimizer, epoch, args)
-        acc1 = validate(val_loader, model, criterion, cfg)
-
-        is_best = acc1 > best_acc1
-        best_acc1 = max(acc1, best_acc1)
-
-        if not cfg.multiprocessing_distributed or (
-            cfg.multiprocessing_distributed and cfg.rank % cfg.ngpus_per_node == 0
-        ):
-            save_checkpoint(
-                {
-                    "epoch": epoch + 1,
-                    "arch": cfg.arch,
-                    "state_dict": model.state_dict(),
-                    "best_acc1": best_acc1,
-                    "optimizer": optimizer.state_dict(),
-                },
-                is_best,
-            )
+        train(train_loader, model, criterion, optimizer, epoch, cfg)
+        validate(val_loader, model, criterion, cfg)
 
 
 def train(train_loader, model, criterion, optimizer, epoch, cfg):
@@ -214,7 +140,7 @@ def train(train_loader, model, criterion, optimizer, epoch, cfg):
         # measure data loading time
         data_time.update(time.time() - end)
 
-        if args.gpu is not None:
+        if cfg.gpu is not None:
             images = images.cuda(cfg.gpu, non_blocking=True)
         if torch.cuda.is_available():
             target = target.cuda(cfg.gpu, non_blocking=True)
@@ -238,7 +164,7 @@ def train(train_loader, model, criterion, optimizer, epoch, cfg):
         batch_time.update(time.time() - end)
         end = time.time()
 
-        if i % args.print_freq == 0:
+        if i % cfg.print_freq == 0:
             progress.display(i)
 
 
@@ -276,21 +202,11 @@ def validate(val_loader, model, criterion, cfg):
             batch_time.update(time.time() - end)
             end = time.time()
 
-            if i % args.print_freq == 0:
+            if i % cfg.print_freq == 0:
                 progress.display(i)
-
-        # TODO: this should also be done with the ProgressMeter
-        print(
+        logger.info(
             " * Acc@1 {top1.avg:.3f} Acc@5 {top5.avg:.3f}".format(top1=top1, top5=top5)
         )
-
-    return top1.avg
-
-
-def save_checkpoint(state, is_best, filename="checkpoint.pth.tar"):
-    torch.save(state, filename)
-    if is_best:
-        shutil.copyfile(filename, "model_best.pth.tar")
 
 
 class AverageMeter(object):
@@ -327,7 +243,7 @@ class ProgressMeter(object):
     def display(self, batch):
         entries = [self.prefix + self.batch_fmtstr.format(batch)]
         entries += [str(meter) for meter in self.meters]
-        print("\t".join(entries))
+        logger.info("\t".join(entries))
 
     def _get_batch_fmtstr(self, num_batches):
         num_digits = len(str(num_batches // 1))

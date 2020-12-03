@@ -1,0 +1,19 @@
+seed: ~
+gpu: ~
+world_size: 4
+dist_backend: nccl
+dist_url: "localhost:9999"
+batch_size: 256
+ngpus_per_node: 4
+sgd:
+    lr: 0.01
+    lambd: 0.0001
+    alpha: 0.75
+    t0: 1000000.0
+    weight_decay: 0
+
+hydra.launcher.joblib.backend: multiprocessing
+
+
+defaults:
+    - hydra/launcher: joblib
