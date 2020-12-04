@@ -30,5 +30,10 @@ Take a look at our tutorial series:
 2. Intermediate Tutorial (coming soon)
 3. Advanced Tutorial (coming soon)
 
+### Other Config Projects:
+A list of projects following the `hydra_configs` convention (please notify us if you have one!):
+
+[Pytorch Lightning](https://github.com/romesco/hydra-lightning)
+
 ### License
 hydra-torch is licensed under [MIT License](LICENSE).
