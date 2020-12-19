@@ -13,7 +13,7 @@ from typing import Any
 
 @dataclass
 class DataLoaderConf:
-    _target_: str = "torch.utils.data.DataLoader"
+    _target_: str = "torch.utils.data.dataloader.DataLoader"
     dataset: Any = MISSING
     batch_size: Any = 1
     shuffle: Any = False
