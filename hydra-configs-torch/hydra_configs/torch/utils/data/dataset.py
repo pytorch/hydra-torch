@@ -17,14 +17,9 @@ class DatasetConf:
 
 
 @dataclass
-class IterableDatasetConf:
-    _target_: str = "torch.utils.data.dataset.IterableDataset"
-
-
-@dataclass
-class TensorDatasetConf:
-    _target_: str = "torch.utils.data.dataset.TensorDataset"
-    tensors: Any = MISSING
+class ChainDatasetConf:
+    _target_: str = "torch.utils.data.dataset.ChainDataset"
+    datasets: Any = MISSING
 
 
 @dataclass
@@ -34,9 +29,14 @@ class ConcatDatasetConf:
 
 
 @dataclass
-class ChainDatasetConf:
-    _target_: str = "torch.utils.data.dataset.ChainDataset"
-    datasets: Any = MISSING
+class IterableDatasetConf:
+    _target_: str = "torch.utils.data.dataset.IterableDataset"
+
+
+@dataclass
+class TensorDatasetConf:
+    _target_: str = "torch.utils.data.dataset.TensorDataset"
+    tensors: Any = MISSING
 
 
 @dataclass

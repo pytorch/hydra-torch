@@ -27,37 +27,37 @@ configen:
       classes:
         - Adam
 
-    - name: torch.optim.adamw
-      classes:
-        - AdamW
-
-    - name: torch.optim.sparse_adam
-      classes:
-        - SparseAdam
-
     - name: torch.optim.adamax
       classes:
         - Adamax
+
+    - name: torch.optim.adamw
+      classes:
+        - AdamW
 
     - name: torch.optim.asgd
       classes:
         - ASGD
 
-    - name: torch.optim.sgd
+    - name: torch.optim.lbfgs
       classes:
-        - SGD
-
-    - name: torch.optim.rprop
-      classes:
-        - Rprop
+        - LBFGS
 
     - name: torch.optim.rmsprop
       classes:
         - RMSprop
 
-    - name: torch.optim.lbfgs
+    - name: torch.optim.rprop
       classes:
-        - LBFGS
+        - Rprop
+
+    - name: torch.optim.sgd
+      classes:
+        - SGD
+
+    - name: torch.optim.sparse_adam
+      classes:
+        - SparseAdam
 
     - name: torch.optim.lr_scheduler
       classes:
@@ -79,20 +79,20 @@ configen:
     - name: torch.utils.data.dataset
       classes:
         - Dataset
+        - ChainDataset
+        - ConcatDataset
         - IterableDataset
         - TensorDataset
-        - ConcatDataset
-        - ChainDataset
         - Subset
 
     - name: torch.utils.data.sampler
       classes:
         - Sampler
-        - SequentialSampler
+        - BatchSampler
         - RandomSampler
+        - SequentialSampler
         - SubsetRandomSampler
         - WeightedRandomSampler
-        - BatchSampler
 
     - name: torch.utils.data.distributed
       classes:

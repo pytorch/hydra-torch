@@ -14,9 +14,10 @@ model = nn.Linear(1, 1)
 
 
 @pytest.mark.parametrize(
-    "classname, cfg, passthrough_kwargs, expected",
+    "modulepath, classname, cfg, passthrough_kwargs, expected",
     [
         pytest.param(
+            "optim.adadelta",
             "Adadelta",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -24,6 +25,7 @@ model = nn.Linear(1, 1)
             id="AdadeltaConf",
         ),
         pytest.param(
+            "optim.adagrad",
             "Adagrad",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -31,6 +33,7 @@ model = nn.Linear(1, 1)
             id="AdagradConf",
         ),
         pytest.param(
+            "optim.adam",
             "Adam",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -38,6 +41,7 @@ model = nn.Linear(1, 1)
             id="AdamConf",
         ),
         pytest.param(
+            "optim.adamax",
             "Adamax",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -45,6 +49,7 @@ model = nn.Linear(1, 1)
             id="AdamaxConf",
         ),
         pytest.param(
+            "optim.adamw",
             "AdamW",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -52,6 +57,7 @@ model = nn.Linear(1, 1)
             id="AdamWConf",
         ),
         pytest.param(
+            "optim.asgd",
             "ASGD",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -59,6 +65,7 @@ model = nn.Linear(1, 1)
             id="ASGDConf",
         ),
         pytest.param(
+            "optim.lbfgs",
             "LBFGS",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -66,6 +73,7 @@ model = nn.Linear(1, 1)
             id="LBFGSConf",
         ),
         pytest.param(
+            "optim.rmsprop",
             "RMSprop",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -73,6 +81,7 @@ model = nn.Linear(1, 1)
             id="RMSpropConf",
         ),
         pytest.param(
+            "optim.rprop",
             "Rprop",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -80,6 +89,7 @@ model = nn.Linear(1, 1)
             id="RpropConf",
         ),
         pytest.param(
+            "optim.sgd",
             "SGD",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -87,6 +97,7 @@ model = nn.Linear(1, 1)
             id="SGDConf",
         ),
         pytest.param(
+            "optim.sparse_adam",
             "SparseAdam",
             {"lr": 0.1},
             {"params": model.parameters()},
@@ -96,9 +107,9 @@ model = nn.Linear(1, 1)
     ],
 )
 def test_instantiate_classes(
-    classname: str, cfg: Any, passthrough_kwargs: Any, expected: Any
+    modulepath: str, classname: str, cfg: Any, passthrough_kwargs: Any, expected: Any
 ) -> None:
-    full_class = f"hydra_configs.torch.optim.{classname}Conf"
+    full_class = f"hydra_configs.torch.{modulepath}.{classname}Conf"
     schema = OmegaConf.structured(get_class(full_class))
     cfg = OmegaConf.merge(schema, cfg)
     obj = instantiate(cfg, **passthrough_kwargs)

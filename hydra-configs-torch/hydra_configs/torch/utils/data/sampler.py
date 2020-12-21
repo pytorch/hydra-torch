@@ -18,9 +18,11 @@ class SamplerConf:
 
 
 @dataclass
-class SequentialSamplerConf:
-    _target_: str = "torch.utils.data.sampler.SequentialSampler"
-    data_source: Any = MISSING
+class BatchSamplerConf:
+    _target_: str = "torch.utils.data.sampler.BatchSampler"
+    sampler: Any = MISSING
+    batch_size: Any = MISSING
+    drop_last: Any = MISSING
 
 
 @dataclass
@@ -30,6 +32,12 @@ class RandomSamplerConf:
     replacement: Any = False
     num_samples: Any = None
     generator: Any = None
+
+
+@dataclass
+class SequentialSamplerConf:
+    _target_: str = "torch.utils.data.sampler.SequentialSampler"
+    data_source: Any = MISSING
 
 
 @dataclass
@@ -46,11 +54,3 @@ class WeightedRandomSamplerConf:
     num_samples: Any = MISSING
     replacement: Any = True
     generator: Any = None
-
-
-@dataclass
-class BatchSamplerConf:
-    _target_: str = "torch.utils.data.sampler.BatchSampler"
-    sampler: Any = MISSING
-    batch_size: Any = MISSING
-    drop_last: Any = MISSING
