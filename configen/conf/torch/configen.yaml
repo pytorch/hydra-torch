@@ -16,63 +16,51 @@ configen:
   # list of modules to generate configs for
   modules:
     - name: torch.optim.adadelta
-      # for each module, a list of classes
       classes:
         - Adadelta
 
     - name: torch.optim.adagrad
-      # for each module, a list of classes
       classes:
         - Adagrad
 
     - name: torch.optim.adam
-      # for each module, a list of classes
       classes:
         - Adam
 
-    - name: torch.optim.adamw
-      # for each module, a list of classes
-      classes:
-        - AdamW
-
-    - name: torch.optim.sparse_adam
-      # for each module, a list of classes
-      classes:
-        - SparseAdam
-
     - name: torch.optim.adamax
-      # for each module, a list of classes
       classes:
         - Adamax
 
+    - name: torch.optim.adamw
+      classes:
+        - AdamW
+
     - name: torch.optim.asgd
-      # for each module, a list of classes
       classes:
         - ASGD
 
-    - name: torch.optim.sgd
-      # for each module, a list of classes
-      classes:
-        - SGD
-
-    - name: torch.optim.rprop
-      # for each module, a list of classes
-      classes:
-        - Rprop
-
-    - name: torch.optim.rmsprop
-      # for each module, a list of classes
-      classes:
-        - RMSprop
-
     - name: torch.optim.lbfgs
-      # for each module, a list of classes
       classes:
         - LBFGS
 
+    - name: torch.optim.rmsprop
+      classes:
+        - RMSprop
+
+    - name: torch.optim.rprop
+      classes:
+        - Rprop
+
+    - name: torch.optim.sgd
+      classes:
+        - SGD
+
+    - name: torch.optim.sparse_adam
+      classes:
+        - SparseAdam
+
     - name: torch.optim.lr_scheduler
       classes:
-        # Schedulers
         - LambdaLR
         - MultiplicativeLR
         - StepLR
@@ -84,7 +72,28 @@ configen:
         - CosineAnnealingWarmRestarts
         - OneCycleLR
 
-    - name: torch.utils.data
+    - name: torch.utils.data.dataloader
       classes:
-          # Data Loading utils
-          - DataLoader
+        - DataLoader
+
+    - name: torch.utils.data.dataset
+      classes:
+        - Dataset
+        - ChainDataset
+        - ConcatDataset
+        - IterableDataset
+        - TensorDataset
+        - Subset
+
+    - name: torch.utils.data.sampler
+      classes:
+        - Sampler
+        - BatchSampler
+        - RandomSampler
+        - SequentialSampler
+        - SubsetRandomSampler
+        - WeightedRandomSampler
+
+    - name: torch.utils.data.distributed
+      classes:
+        - DistributedSampler
