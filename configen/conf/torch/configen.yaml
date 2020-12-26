@@ -97,3 +97,24 @@ configen:
     - name: torch.utils.data.distributed
       classes:
         - DistributedSampler
+
+    - name: torch.nn.modules.loss
+      classes:
+        - BCELoss
+        - BCEWithLogitsLoss
+        - CosineEmbeddingLoss
+        - CTCLoss
+        - L1Loss
+        - HingeEmbeddingLoss
+        - KLDivLoss
+        - MarginRankingLoss
+        - MSELoss
+        - MultiLabelMarginLoss
+        - MultiLabelSoftMarginLoss
+        - MultiMarginLoss
+        - NLLLoss
+        - NLLLoss2d
+        - PoissonNLLLoss
+        - SmoothL1Loss
+        - SoftMarginLoss
+        - TripletMarginLoss
