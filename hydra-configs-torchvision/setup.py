@@ -9,5 +9,5 @@ setup(
     author_email=["omry@fb.com", "rosario@cs.uw.edu"],
     url="http://github.com/pytorch/hydra-torch",
     include_package_data=True,
-    install_requires=["omegaconf"],
+    install_requires=["omegaconf", "torchvision==0.7"],
 )
