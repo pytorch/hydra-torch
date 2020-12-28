@@ -1,3 +1,4 @@
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 # flake8: noqa
 from __future__ import print_function
 import torch
