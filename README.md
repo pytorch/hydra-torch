@@ -31,7 +31,7 @@ from hydra_configs.<package_name>.path.to.module import <ClassName>Conf
 ```
 where `<package_name>` is the package being configured and `path.to.module` is the path in the original package.
 
-Inferring where the package is located is as simple as prepending `hydra_configs` and postpending `Conf` to the original class import:
+Inferring where the package is located is as simple as prepending `hydra_configs.` and postpending `Conf` to the original class import:
 e.g.
 ```python
 #module to be configured
