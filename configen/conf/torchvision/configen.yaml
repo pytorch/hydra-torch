@@ -15,6 +15,11 @@ configen:
 
   # list of modules to generate configs for
   modules:
+    - name: torchvision.datasets.vision
+      classes:
+        - VisionDataset
+        - StandardTransform
+
     - name: torchvision.datasets.mnist
       # mnist datasets
       classes:

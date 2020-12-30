@@ -46,7 +46,10 @@ class EMNISTConf:
     _target_: str = "torchvision.datasets.mnist.EMNIST"
     root: Any = MISSING
     split: Any = MISSING
-    kwargs: Any = MISSING
+    train: Any = True
+    transform: Any = None
+    target_transform: Any = None
+    download: Any = False
 
 
 @dataclass
@@ -56,4 +59,6 @@ class QMNISTConf:
     what: Any = None
     compat: Any = True
     train: Any = True
-    kwargs: Any = MISSING
+    transform: Any = None
+    target_transform: Any = None
+    download: Any = False
