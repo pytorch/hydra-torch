@@ -23,3 +23,36 @@ configen:
         - KMNIST
         - EMNIST
         - QMNIST
+
+    - name: torchvision.transforms.transforms
+      # mnist datasets
+      classes:
+        - CenterCrop
+        - ColorJitter
+        - Compose
+        - ConvertImageDtype
+        - FiveCrop
+        - Grayscale
+        - Lambda
+        - LinearTransformation
+        - Normalize
+        - Pad
+        - PILToTensor
+        - RandomAffine
+        - RandomApply
+        - RandomChoice
+        - RandomCrop
+        - RandomErasing
+        - RandomGrayscale
+        - RandomHorizontalFlip
+        - RandomOrder
+        - RandomPerspective
+        - RandomResizedCrop
+        - RandomRotation
+        - RandomTransforms
+        - RandomVerticalFlip
+        - Resize
+        - Scale
+        - TenCrop
+        - ToPILImage
+        - ToTensor
