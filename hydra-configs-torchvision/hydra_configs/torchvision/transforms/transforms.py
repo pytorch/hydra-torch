@@ -8,7 +8,7 @@
 
 from dataclasses import dataclass, field
 from omegaconf import MISSING
-from typing import Any
+from typing import Any, List
 
 
 @dataclass
@@ -105,7 +105,7 @@ class RandomApplyConf:
 @dataclass
 class RandomChoiceConf:
     _target_: str = "torchvision.transforms.transforms.RandomChoice"
-    transforms: Any = MISSING
+    transforms: Any = None
 
 
 @dataclass

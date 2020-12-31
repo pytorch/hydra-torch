@@ -7,6 +7,7 @@ import torch
 
 # import torchvision.datasets as datasets
 import torchvision.transforms as transforms
+from torchvision.transforms.transforms import ToTensor
 
 from typing import Any
 
@@ -140,24 +141,24 @@ def identity(x):
             transforms.transforms.RandomAffine(degrees=0),
             id="RandomAffineConf",
         ),
-        # pytest.param(
-        #    "transforms.transforms",
-        #    "RandomApply",
-        #    {},
-        #    [[ToTensor()]],
-        #    {},
-        #    transforms.transforms.RandomApply([ToTensor()]),
-        #    id="RandomApplyConf",
-        # ),
-        # pytest.param(
-        #    "transforms.transforms",
-        #    "RandomChoice",
-        #    {},
-        #    [],
-        #    {"transforms":[[ToTensor()]]},
-        #    transforms.transforms.RandomChoice([ToTensor()]),
-        #    id="RandomChoiceConf",
-        # ),
+        pytest.param(
+            "transforms.transforms",
+            "RandomApply",
+            {},
+            [],
+            {"transforms": [ToTensor()]},
+            transforms.transforms.RandomApply([ToTensor()]),
+            id="RandomApplyConf",
+        ),
+        pytest.param(
+            "transforms.transforms",
+            "RandomChoice",
+            {},
+            [],
+            {"transforms": [[ToTensor()]]},
+            transforms.transforms.RandomChoice([ToTensor()]),
+            id="RandomChoiceConf",
+        ),
         pytest.param(
             "transforms.transforms",
             "RandomCrop",
@@ -194,15 +195,15 @@ def identity(x):
             transforms.transforms.RandomHorizontalFlip(),
             id="RandomHorizontalFlipConf",
         ),
-        # pytest.param(
-        #     "transforms.transforms",
-        #     "RandomOrder",
-        #     {},
-        #     [],
-        #     {},
-        #     transforms.transforms.RandomOrder(),
-        #     id="RandomOrderConf",
-        # ),
+        pytest.param(
+            "transforms.transforms",
+            "RandomOrder",
+            {},
+            [],
+            {"transforms": [ToTensor()]},
+            transforms.transforms.RandomOrder([ToTensor()]),
+            id="RandomOrderConf",
+        ),
         pytest.param(
             "transforms.transforms",
             "RandomPerspective",
@@ -230,15 +231,15 @@ def identity(x):
             transforms.transforms.RandomRotation(degrees=0),
             id="RandomRotationConf",
         ),
-        # pytest.param(
-        #    "transforms.transforms",
-        #    "RandomTransforms",
-        #    {},
-        #    [],
-        #    {},
-        #    transforms.transforms.RandomTransforms(),
-        #    id="RandomTransformsConf",
-        # ),
+        pytest.param(
+            "transforms.transforms",
+            "RandomTransforms",
+            {},
+            [],
+            {"transforms": [ToTensor()]},
+            transforms.transforms.RandomTransforms([ToTensor()]),
+            id="RandomTransformsConf",
+        ),
         pytest.param(
             "transforms.transforms",
             "RandomVerticalFlip",
@@ -297,6 +298,6 @@ def test_instantiate_classes(
     full_class = f"hydra_configs.torchvision.{modulepath}.{classname}Conf"
     schema = OmegaConf.structured(get_class(full_class))
     cfg = OmegaConf.merge(schema, cfg)
-    obj = instantiate(cfg, *passthrough_args, **passthrough_kwargs)
+    obj = instantiate(cfg, *passthrough_args, **passthrough_kwargs, _convert_="all")
 
     assert isinstance(obj, type(expected))
