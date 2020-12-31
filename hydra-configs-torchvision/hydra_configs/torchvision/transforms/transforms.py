@@ -98,6 +98,7 @@ class RandomAffineConf:
 @dataclass
 class RandomApplyConf:
     _target_: str = "torchvision.transforms.transforms.RandomApply"
+    _convert_: str = 'all'
     transforms: Any = MISSING
     p: Any = 0.5
 
@@ -105,6 +106,7 @@ class RandomApplyConf:
 @dataclass
 class RandomChoiceConf:
     _target_: str = "torchvision.transforms.transforms.RandomChoice"
+    _convert_: str = 'all'
     transforms: Any = None
 
 
@@ -143,6 +145,7 @@ class RandomHorizontalFlipConf:
 @dataclass
 class RandomOrderConf:
     _target_: str = "torchvision.transforms.transforms.RandomOrder"
+    _convert_: str = 'all'
     transforms: Any = MISSING
 
 
@@ -177,6 +180,7 @@ class RandomRotationConf:
 @dataclass
 class RandomTransformsConf:
     _target_: str = "torchvision.transforms.transforms.RandomTransforms"
+    _convert_: str = 'all'
     transforms: Any = MISSING
 
 

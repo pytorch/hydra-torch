@@ -144,7 +144,7 @@ def identity(x):
         pytest.param(
             "transforms.transforms",
             "RandomApply",
-            {},
+            {"_convert_": "all"},
             [],
             {"transforms": [ToTensor()]},
             transforms.transforms.RandomApply([ToTensor()]),
@@ -298,6 +298,6 @@ def test_instantiate_classes(
     full_class = f"hydra_configs.torchvision.{modulepath}.{classname}Conf"
     schema = OmegaConf.structured(get_class(full_class))
     cfg = OmegaConf.merge(schema, cfg)
-    obj = instantiate(cfg, *passthrough_args, **passthrough_kwargs, _convert_="all")
+    obj = instantiate(cfg, *passthrough_args, **passthrough_kwargs)
 
     assert isinstance(obj, type(expected))
