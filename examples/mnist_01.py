@@ -15,9 +15,23 @@ from dataclasses import dataclass
 from typing import Any
 
 # hydra-torch structured config imports
-from config.torch.optim import AdadeltaConf
-from config.torch.optim.lr_scheduler import StepLRConf
-from config.torch.utils.data import DataLoaderConf
+from hydra_configs.torch.optim import AdadeltaConf
+from hydra_configs.torch.optim.lr_scheduler import StepLRConf
+from hydra_configs.torch.utils.data import DataLoaderConf
+from hydra_configs.torch.data.dataset import DatasetConf
+
+# from hydra_configs.torchvision.datasets.mnist import MNISTConf
+# NOTE:Above still uses hydra_configs namespace, but comes from .torchvision
+
+
+@dataclass
+class MNISTConf(DatasetConf):
+    _target_: str = "torchvision.datasets.mnist.MNIST"
+    root: Any = MISSING
+    train: Any = True
+    transform: Any = None
+    target_transform: Any = None
+    download: Any = False
 
 
 @dataclass
@@ -39,12 +53,14 @@ class MNISTConf:
     log_interval: int = 10
     save_model: bool = False
     checkpoint_name: str = "unnamed.pt"
-    data_train: DataLoaderConf = DataLoaderConf(
+    train_dataloader: DataLoaderConf = DataLoaderConf(
         batch_size=64, shuffle=True, num_workers=1, pin_memory=False
     )
-    data_test: DataLoaderConf = DataLoaderConf(
+    test_dataloader: DataLoaderConf = DataLoaderConf(
         batch_size=1000, shuffle=False, num_workers=1
     )
+    train_dataset: DatasetConf = MNISTConf(root="../data", train=True, download=True)
+    test_dataset: DatasetConf = MNISTConf(root="../data", train=False, download=True)
     model: MNISTNetConf = MNISTNetConf()
     optim: Any = AdadeltaConf()
     scheduler: Any = StepLRConf(step_size=1)
@@ -167,12 +183,10 @@ def main(cfg):  # DIFF
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
     )
-    dataset_train = datasets.MNIST(
-        "../data", train=True, download=True, transform=transform
-    )
-    dataset_test = datasets.MNIST("../data", train=False, transform=transform)
-    train_loader = instantiate(cfg.data_train, dataset=dataset_train)  # DIFF
-    test_loader = instantiate(cfg.data_test, dataset=dataset_test)  # DIFF
+    train_dataset = instantiate(cfg.train_dataset, transform=transform)  # DIFF
+    test_dataset = instantiate(cfg.test_dataset, transform=transform)  # DIFF
+    train_loader = instantiate(cfg.train_dataloader, dataset=train_dataset)  # DIFF
+    test_loader = instantiate(cfg.test_dataloader, dataset=test_dataset)  # DIFF
 
     input_shape = (1, 28, 28)
     output_shape = (1, 10)
