@@ -194,13 +194,6 @@ class ResizeConf:
 
 
 @dataclass
-class ScaleConf:
-    _target_: str = "torchvision.transforms.transforms.Scale"
-    args: Any = MISSING
-    kwargs: Any = MISSING
-
-
-@dataclass
 class TenCropConf:
     _target_: str = "torchvision.transforms.transforms.TenCrop"
     size: Any = MISSING

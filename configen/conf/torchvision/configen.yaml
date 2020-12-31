@@ -52,7 +52,6 @@ configen:
         - RandomTransforms
         - RandomVerticalFlip
         - Resize
-        - Scale
         - TenCrop
         - ToPILImage
         - ToTensor
