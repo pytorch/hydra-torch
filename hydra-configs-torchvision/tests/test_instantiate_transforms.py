@@ -4,7 +4,8 @@ from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
 
 import torch
-import torchvision.datasets as datasets
+
+# import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 
 from typing import Any
@@ -17,15 +18,15 @@ def identity(x):
 @pytest.mark.parametrize(
     "modulepath, classname, cfg, passthrough_args, passthrough_kwargs, expected",
     [
-        pytest.param(
-            "datasets.vision",
-            "StandardTransform",
-            {},
-            [],
-            {},
-            datasets.vision.StandardTransform(),
-            id="StandardTransformConf",
-        ),
+        #        pytest.param(
+        #            "datasets.vision",
+        #            "StandardTransform",
+        #            {},
+        #            [],
+        #            {},
+        #            datasets.vision.StandardTransform(),
+        #            id="StandardTransformConf",
+        #        ),
         pytest.param(
             "transforms.transforms",
             "CenterCrop",
