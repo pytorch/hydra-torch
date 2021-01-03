@@ -25,6 +25,8 @@ configen:
         - QMNIST
 
     - name: torchvision.transforms.transforms
+      default_flags:
+          _convert_: ALL
       # mnist datasets
       classes:
         - CenterCrop
