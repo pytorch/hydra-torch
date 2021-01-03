@@ -1,6 +1,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import pytest
-from hydra.utils import get_class, instantiate, ConvertMode
+from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
 
 import torch
@@ -144,7 +144,7 @@ def identity(x):
         pytest.param(
             "transforms.transforms",
             "RandomApply",
-            {"_convert_": ConvertMode.ALL},
+            {},
             [],
             {"transforms": [ToTensor()]},
             transforms.transforms.RandomApply([ToTensor()]),
