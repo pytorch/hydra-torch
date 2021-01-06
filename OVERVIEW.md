@@ -22,11 +22,11 @@ The `hydra-torch` repo serves three purposes.
 ### Repo Structure
 ```
 📂 hydra-torch
-└ 📁 configen 						# source files used when generating package content. all projects have their own subdirectory here.
-└ 📁 hydra-configs-torch			# a project corresponding to configuring a specific library (contains package definition)
+└ 📁 configen 				# source files used when generating package content. all projects have their own subdirectory here.
+└ 📁 hydra-configs-torch		# a project corresponding to configuring a specific library (contains package definition)
 └ 📁 hydra-configs-torchvision		# "
-└ 📁 hydra-configs-<future-library> # "
-└ 📁 examples						# use-cases and tutorials
+└ 📁 hydra-configs-<future-library> 	# "
+└ 📁 examples				# use-cases and tutorials
 ```
 
 Each `hydra-configs-<library-name>` defines its own package corresponding to a project it provides classes for. That is, `hydra-configs-torch` contains a package (with its own `setup.py`) which provides classes for `torch`.
@@ -43,12 +43,12 @@ Our approach makes use of [Native Namespace Packages](https://packaging.python.o
 The format for folder structure per project is always:
 ```
 📂 hydra-configs-<library-name>     # the dir containing the package of configs for <library>
-├ 📁 hydra_configs					# the namespace we will always use
-│ └ 📁 <library-name>				# e.g. 'torchvision'
+├ 📁 hydra_configs		    # the namespace we will always use
+│ └ 📁 <library-name>		    # e.g. 'torchvision'
 │   └ 📁 <library-subpackage-name>  # e.g. 'transforms'
 │      ⋮
 │      └ <module>.py                # e.g. 'transforms.py'
-└ setup.py 							# configures this package for setuptools
+└ setup.py 			    # configures this package for setuptools
 ```
 
 The beauty of this approach is that users can be sure the importing idiom is reliably:
