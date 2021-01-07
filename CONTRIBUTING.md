@@ -22,6 +22,38 @@ There are 3 main ways to contribute starting with the most straightfoward option
 Please download the formatting / linting requirements: `pip install -r requirements/dev.txt`.
 Please install the pre-commit config for this environment: `pre-commit install`.
 
+
+## Using Configen
+
+We are actively developing the tool, [Configen](https://github.com/facebookresearch/hydra/tree/master/tools/configen) to automatically create config classes for Hydra. Much of the work for `hydra-torch` has helped prototype this workflow and it is still rapidly evolving.
+
+Currently, the workflow looks like the following:
+
+1. Ensure the most recent configen is installed from master.
+   - `pip install git+https://github.com/facebookresearch/hydra/#subdirectory=tools/configen`
+2. Edit `configen/conf/<project-name>/configen.yaml`, listing the module and its classes from the project library to be configured.
+   - e.g. in `/configen/conf/torchvision/configen.yaml`:
+	```yaml
+    modules:
+    - name: torchvision.datasets.mnist  # module with classes to gen for
+      # mnist datasets
+      classes:                          # list of classes to gen for
+        - MNIST
+        - FashionMNIST
+        - KMNIST
+        - EMNIST
+        - QMNIST
+
+    ```
+3. In the corresponding project directory, `hydra-configs-<library-name>`, run the command `configen --config-dir ../configen/conf/<library-name>`.
+4. If generation is successful, the configs should be located in:
+     - `/hydra-configs-<library-name>/hydra_configs/path/to/module`.
+   - for our above example, you should see `MNISTConf, ..., QMNISTConf` in the module, `mnist.py` located in:
+  `hydra-configs-torchvision/hydra_configs/torchvision/datasets`
+
+>**Note:** This process is still under development. As we encounter blocking factors, we do the appropriate development on Configen to mitigate future issues.
+
+
 ## Pull Requests
 We actively welcome your pull requests.
 
