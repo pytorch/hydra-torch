@@ -1,21 +1,25 @@
 # Overview
 
-The `hydra-torch` repo serves three purposes.
+The audience for this library is Hydra users using PyTorch and related libraries (torchvision, ...)
+The goals of this repository are:
+
+1. Provide a maintained and tested implementation of config classes that can be used instantiate and configure various classes from the supported projects.
+2. Provide examples and tutorials demonstrating best practices for using Hydra to configure PyTorch deep learning applications.
+3. Showcase a recommended approach for creating other similar configuration packages for other libraries.
 
 1. It demonstrates a standardization for creating and organizing Hydra configuration classes for the ML/torch community and beyond.
-	- If someone wants to create their own `hydra-<library>` repo, `hydra-torch` points towards an upper bound on what it should look like.
 2. It unifies a collection of classes across projects in one place, ensuring robust testing, version compatibility, and PyPI distributed packaging for each.
     - We see many hydra users reimplementing these classes (and not tracking APIs of the configured projects). `hydra-torch` factors this code out.
 3. It provides best practices and guidance on how to organize code and utilize Hydra for research, production, and other innovative use cases.
 
 ##### Terminology for this overview:
 - The overall effort and repo is named:`hydra-torch`
-- **Library:** The library being configured
+- **Library:** The library being configured.
   - e.g. `torch`, `torchvision`
-- **Project:** The project corresponding to the library being configured
+- **Project:** The project corresponding to the library being configured.
   - e.g. `hydra-configs-torch`, `hydra-configs-torchvision`
-- **Package:** The installable package containing the configs
-  - here, also `hydra-configs-torch`, `hydra-configs-torchvision`. find definition in the project dir's `setup.py`.
+- **Package:** The installable package containing the configs. Usually corresponding to a specific project.
+  - here, also `hydra-configs-torch`, `hydra-configs-torchvision`. Find the package definition in the project dir's `setup.py`.
 
 
 
@@ -31,14 +35,12 @@ The `hydra-torch` repo serves three purposes.
 
 Each `hydra-configs-<library-name>` defines its own package corresponding to a project it provides classes for. That is, `hydra-configs-torch` contains a package (with its own `setup.py`) which provides classes for `torch`.
 
-[`hydra-configs-projects.txt`](hydra-configs-projects.txt) specifies a list of projects this repo maintains. When adding a project, please update this file.
-
 
 ### Packaging
 
 This repo maintains multiple packages. An important area of consideration for these packages is to organize them such that they are compatible with each other and have an 'expected', intuitive structure. The easiest way to do this is to enforce a standard for all Hydra configs packages to follow.
 
-Our approach makes use of [Native Namespace Packages](https://packaging.python.org/guides/packaging-namespace-packages/#native-namespace-packages). This allows all packages to share the top level namespace `hydra_configs`. The only real requirement for this package format is to ensure there is no `__init__.py` located in the namespace folder.
+Our approach makes use of [Native Namespace Packages](https://packaging.python.org/guides/packaging-namespace-packages/#native-namespace-packages). This allows all packages to share the top level namespace `hydra_configs`. The only real requirement for this package format is to ensure there is **no**  `__init__.py` located in the namespace folder.
 
 The format for folder structure per project is always:
 ```
@@ -55,40 +57,17 @@ The beauty of this approach is that users can be sure the importing idiom is rel
 ```python
 from hydra_configs.<project_name>.path.to.module import <ClassName>Conf
 ```
+For example:
+```python
+from hydra_configs.torch.optim import AdamConf
+```
+ 
 
 This will retain compatibility even with repositories that define configs for hydra outside of the `hydra-torch` repo as long as they follow this pattern.
 
 ##### Metapackage
 
-For convenience, we also provide a metapackage called `hydra-torch`. This is defined at the top level of the repo in `setup.py`. Effectively, all this means is that a user can either install each project-specific package as needed or they can obtain them all in one shot by simply installing this singular metapackage.
-
-### Configen
-
-We are actively developing the tool, [Configen](https://github.com/facebookresearch/hydra/tree/master/tools/configen) to automatically create config classes for Hydra. Much of the work for `hydra-torch` has helped prototype this workflow and it is still rapidly evolving.
-
-Currently, the workflow looks like the following:
-0. Ensure the most recent configen is installed from master.
-1. Edit `configen/conf/<project-name>/configen.yaml`, listing the module and its classes from the project library to be configured.
-   - e.g. in `/configen/conf/torchvision/configen.yaml`:
-	```yaml
-    modules:
-    - name: torchvision.datasets.mnist  # module with classes to gen for
-      # mnist datasets
-      classes:                          # list of classes to gen for
-        - MNIST
-        - FashionMNIST
-        - KMNIST
-        - EMNIST
-        - QMNIST
-
-    ```
-2. In the corresponding project directory, `hydra-configs-<library-name>`, run the command `configen --config-dir ../configen/conf/<library-name>`.
-3. If generation is successful, the configs should be located in:
-     - `/hydra-configs-<library-name>/hydra_configs/path/to/module`.
-   - for our above example, you should see `MNISTConf, ..., QMNISTConf` in the module, `mnist.py` located in:
-  `hydra-configs-torchvision/hydra_configs/torchvision/datasets`
-
->**Note:** This process is still under development. As we encounter blocking factors, we do the appropriate development on Configen to mitigate future issues.
+For convenience, we also provide a metapackage called `hydra-torch`. This is defined at the top level of the repo in `setup.py`. Effectively, all this means is that a user can either install each project-specific package as needed or they can obtain them all in one shot by installing only the metapackage.
 
 ### Testing
 
