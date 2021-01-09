@@ -47,7 +47,9 @@ from typing import Any
             datasets.KMNIST(root="./dummy_data_dir"),
             id="KMNISTConf",
         ),
-        # TODO: These tests will need to be changed after EMNISTConf and QMNISTConf are corected.
+        # TODO: These tests will need to be changed after blockers:
+        # 1. EMNISTConf and QMNISTConf are manually created
+        # 2. hydra.utils.instantiate is updated to allow *kwargs instantiation
         #        pytest.param(
         #            "datasets.mnist",
         #            "EMNIST",
