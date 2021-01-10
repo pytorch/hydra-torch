@@ -1,5 +1,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
+import os
+import shutil
 import pytest
+from pathlib import Path
 from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
 
@@ -9,42 +12,42 @@ from typing import Any
 
 
 @pytest.mark.parametrize(
-    "modulepath, classname, cfg, passthrough_args, passthrough_kwargs, expected",
+    "modulepath, classname, cfg, passthrough_args, passthrough_kwargs, expected_class",
     [
         pytest.param(
             "datasets.vision",
             "VisionDataset",
-            {"root": "./dummy_dataset_dir"},
+            {"root": None},
             [],
             {},
-            datasets.VisionDataset(root="./dummy_dataset_dir"),
+            datasets.VisionDataset,
             id="VisionDatasetConf",
         ),
         pytest.param(
             "datasets.mnist",
             "MNIST",
-            {"root": "./dummy_data_dir"},
+            {"root": None},
             [],
             {},
-            datasets.MNIST(root="./dummy_data_dir"),
+            datasets.MNIST,
             id="MNISTConf",
         ),
         pytest.param(
             "datasets.mnist",
             "FashionMNIST",
-            {"root": "./dummy_data_dir"},
+            {"root": None},
             [],
             {},
-            datasets.FashionMNIST(root="./dummy_data_dir"),
+            datasets.FashionMNIST,
             id="FashionMNISTConf",
         ),
         pytest.param(
             "datasets.mnist",
             "KMNIST",
-            {"root": "./dummy_data_dir"},
+            {"root": None},
             [],
             {},
-            datasets.KMNIST(root="./dummy_data_dir"),
+            datasets.KMNIST,
             id="KMNISTConf",
         ),
         # TODO: These tests will need to be changed after blockers:
@@ -53,39 +56,51 @@ from typing import Any
         #        pytest.param(
         #            "datasets.mnist",
         #            "EMNIST",
-        #            {"root":'./dummy_data_dir',
+        #            {"root":None,
         #             "split":"byclass",
         #             "kwargs":None},
         #            [],
         #            {},
-        #            datasets.EMNIST(root='./dummy_data_dir', split="byclass"),
+        #            datasets.EMNIST,
         #            id="EMNISTConf",
         #        ),
         #        pytest.param(
         #            "datasets.mnist",
         #            "QMNIST",
-        #            {"root":'./dummy_data_dir',
+        #            {"root":None,
         #             "what":'test',
         #             "compat":None,
         #             "kwargs":None},
         #            [],
         #            {},
-        #            datasets.QMNIST('./dummy_data_dir', 'test'),
+        #            datasets.QMNIST,
         #            id="QMNISTConf",
         #        ),
     ],
 )
 def test_instantiate_classes(
+    tmpdir: Path,
     modulepath: str,
     classname: str,
     cfg: Any,
     passthrough_args: Any,
     passthrough_kwargs: Any,
-    expected: Any,
+    expected_class: Any,
 ) -> None:
+
+    # Copy 'dummy dataset' from MNIST to current dataset temp data dir:
+    dummy_data_dir = os.path.join(os.path.dirname(__file__), "dummy_data_dir")
+    tmp_data_root = tmpdir.mkdir("data")
+    src = os.path.join(dummy_data_dir, "MNIST/processed")
+    dst = os.path.join(tmp_data_root, classname, "processed")
+    shutil.copytree(src, dst)
+
+    # cfg is populated here since it requires tmpdir testfixture
+    cfg["root"] = str(tmp_data_root)
     full_class = f"hydra_configs.torchvision.{modulepath}.{classname}Conf"
     schema = OmegaConf.structured(get_class(full_class))
     cfg = OmegaConf.merge(schema, cfg)
     obj = instantiate(cfg, *passthrough_args, **passthrough_kwargs)
+    expected_obj = expected_class(root=tmp_data_root)
 
-    assert isinstance(obj, type(expected))
+    assert isinstance(obj, type(expected_obj))
