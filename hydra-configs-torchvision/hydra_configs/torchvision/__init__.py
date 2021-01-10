@@ -7,10 +7,12 @@
 # flake8: noqa
 
 from packaging import version
+from pkg_resources import get_distribution
 import warnings
 import torchvision
 
-CONFIGS_VERSION = "0.7.0"
+CONFIGS_VERSION = get_distribution('hydra-configs-torchvision').version
 
-if version.parse(torchvision.__version__) != version.parse(CONFIGS_VERSION):
+# checks if major.minor versions are matched. patch version is always different
+if version.parse(torchvision.__version__).release[:2] != version.parse(CONFIGS_VERSION).release[:2]:
     warnings.warn(f'Your config and library versions are mismatched. \n HYDRA-CONFIGS-TORCHVISION VERSION: {CONFIGS_VERSION}, \n TORCHVISION VERSION: {torchvision.__version__}. \n Please install the matching configs for reliable functionality.')
