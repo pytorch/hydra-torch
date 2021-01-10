@@ -49,4 +49,4 @@ def tests(session):
             "pip", "install", "-r", target + "/requirements/dev.txt", silent=SILENT
         )
     session.install(*test_targets)  # install config packages
-    session.run("pytest", "-v", *test_targets)
+    session.run("pytest", *test_targets)
