@@ -1,18 +1,19 @@
-# flake8: noqa
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 from __future__ import print_function
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision import datasets, transforms
-from torch.optim import Adadelta
-from torch.optim.lr_scheduler import StepLR
+from torchvision import transforms
 
-###### HYDRA BLOCK ######
+# from torch.optim import Adadelta
+# from torch.optim.lr_scheduler import StepLR
+
+###### HYDRA BLOCK ###### # noqa: E266
 import hydra
 from hydra.utils import instantiate
 from hydra.core.config_store import ConfigStore
-from dataclasses import dataclass
 from typing import Any
+from dataclasses import dataclass
 
 # hydra-torch structured config imports
 from hydra_configs.torch.optim import AdadeltaConf
@@ -20,18 +21,9 @@ from hydra_configs.torch.optim.lr_scheduler import StepLRConf
 from hydra_configs.torch.utils.data import DataLoaderConf
 from hydra_configs.torch.data.dataset import DatasetConf
 
-# from hydra_configs.torchvision.datasets.mnist import MNISTConf
+from hydra_configs.torchvision.datasets.mnist import MNISTConf
+
 # NOTE:Above still uses hydra_configs namespace, but comes from .torchvision
-
-
-@dataclass
-class MNISTConf(DatasetConf):
-    _target_: str = "torchvision.datasets.mnist.MNIST"
-    root: Any = MISSING
-    train: Any = True
-    transform: Any = None
-    target_transform: Any = None
-    download: Any = False
 
 
 @dataclass
@@ -69,7 +61,7 @@ class MNISTConf:
 cs = ConfigStore.instance()
 cs.store(name="mnistconf", node=MNISTConf)
 
-###### / HYDRA BLOCK ######
+###### / HYDRA BLOCK ###### # noqa: E266
 
 
 class Net(nn.Module):
