@@ -84,7 +84,7 @@ For each library, there will be releases for each `MINOR` version starting with 
 ###### Package/Branch Names:
 The version for the `hydra-configs-<library-name>` package will be `MAJOR.MINOR.X` where `MAJOR.MINOR` tracks the library versions and `.X` is reserved for revisions of the configs for that particular `MAJOR.MINOR` should they be required.
 
-> e.g. `hydra-configs-torch==1.6.0` corresponds to `torch==1.6` and if updates are needed for patches from either end, only the `PATCH` version will be updated -> `hydra-config-torch==1.6.1`
+> e.g. `hydra-configs-torch==1.6.0` corresponds to `torch==1.6` and if updates are needed in response to patches for `hydra` or `<library>`, only the `PATCH` version will be incremented -> `hydra-config-torch==1.6.1`
 
 #### Regarding Hydra
 
