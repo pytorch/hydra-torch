@@ -15,15 +15,14 @@ from hydra.core.config_store import ConfigStore
 from typing import Any
 from dataclasses import dataclass
 
-# hydra-torch structured config imports
+# hydra-torch structured config imports:
 from hydra_configs.torch.optim import AdadeltaConf
 from hydra_configs.torch.optim.lr_scheduler import StepLRConf
-from hydra_configs.torch.utils.data import DataLoaderConf
-from hydra_configs.torch.data.dataset import DatasetConf
+from hydra_configs.torch.utils.data.dataloader import DataLoaderConf
 
 from hydra_configs.torchvision.datasets.mnist import MNISTConf
 
-# NOTE:Above still uses hydra_configs namespace, but comes from .torchvision
+# NOTE:Above still uses hydra_configs namespace, but comes from .torchvision package
 
 
 @dataclass
@@ -37,7 +36,7 @@ class MNISTNetConf:
 
 
 @dataclass
-class MNISTConf:
+class TopLvlConf:
     epochs: int = 14
     no_cuda: bool = False
     dry_run: bool = False
@@ -51,21 +50,21 @@ class MNISTConf:
     test_dataloader: DataLoaderConf = DataLoaderConf(
         batch_size=1000, shuffle=False, num_workers=1
     )
-    train_dataset: DatasetConf = MNISTConf(root="../data", train=True, download=True)
-    test_dataset: DatasetConf = MNISTConf(root="../data", train=False, download=True)
+    train_dataset: MNISTConf = MNISTConf(root="../data", train=True, download=True)
+    test_dataset: MNISTConf = MNISTConf(root="../data", train=False, download=True)
     model: MNISTNetConf = MNISTNetConf()
     optim: Any = AdadeltaConf()
     scheduler: Any = StepLRConf(step_size=1)
 
 
 cs = ConfigStore.instance()
-cs.store(name="mnistconf", node=MNISTConf)
+cs.store(name="toplvlconf", node=TopLvlConf)
 
 ###### / HYDRA BLOCK ###### # noqa: E266
 
 
 class Net(nn.Module):
-    # DIFF: new model definition
+    # DIFF: new model definition with configurable params
     def __init__(self, input_shape, output_shape, cfg):
         super(Net, self).__init__()
         self.conv1 = nn.Conv2d(1, cfg.model.conv1_out_channels, 3, 1)
@@ -82,7 +81,9 @@ class Net(nn.Module):
         self.fc1 = nn.Linear(linear_in_shape, cfg.model.fc_hidden_features)
         self.fc2 = nn.Linear(cfg.model.fc_hidden_features, output_shape[1])
 
-    # DIFF: new method
+    # /DIFF
+
+    # DIFF: new utility method (incidental, not critical)
     def _compute_conv_out_shape(self, input_shape):
         dummy_input = torch.zeros(input_shape).unsqueeze(0)
         with torch.no_grad():
@@ -90,6 +91,8 @@ class Net(nn.Module):
             x = self.conv2(x)
             dummy_output = self.maxpool1(x)
         return dummy_output.shape
+
+    # /DIFF
 
     def forward(self, x):
         x = self.conv1(x)
@@ -158,34 +161,42 @@ def test(model, device, test_loader):
     )
 
 
-@hydra.main(config_name="mnistconf")
-def main(cfg):  # DIFF
+@hydra.main(config_name="toplvlconf")
+def main(cfg):
     print(cfg.pretty())
     use_cuda = not cfg.no_cuda and torch.cuda.is_available()
     torch.manual_seed(cfg.seed)
     device = torch.device("cuda" if use_cuda else "cpu")
 
+    # DIFF: the following are removed as they are now in DataloaderConf
     # train_kwargs = {"batch_size": cfg.batch_size}
     # test_kwargs = {"batch_size": cfg.test_batch_size}
     # if use_cuda:
     #    cuda_kwargs = {"num_workers": 1, "pin_memory": True, "shuffle": True}
     #    train_kwargs.update(cuda_kwargs)
     #    test_kwargs.update(cuda_kwargs)
+    # /DIFF
 
     transform = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize((0.1307,), (0.3081,))]
     )
-    train_dataset = instantiate(cfg.train_dataset, transform=transform)  # DIFF
-    test_dataset = instantiate(cfg.test_dataset, transform=transform)  # DIFF
-    train_loader = instantiate(cfg.train_dataloader, dataset=train_dataset)  # DIFF
-    test_loader = instantiate(cfg.test_dataloader, dataset=test_dataset)  # DIFF
+    # DIFF: hotswap enabled datasets with fixed transforms
+    train_dataset = instantiate(cfg.train_dataset, transform=transform)
+    test_dataset = instantiate(cfg.test_dataset, transform=transform)
+    train_loader = instantiate(cfg.train_dataloader, dataset=train_dataset)
+    test_loader = instantiate(cfg.test_dataloader, dataset=test_dataset)
+    # /DIFF
 
+    # DIFF: explicit I/O, configurable model
     input_shape = (1, 28, 28)
     output_shape = (1, 10)
-    model = Net(input_shape, output_shape, cfg).to(device)  # DIFF
+    model = Net(input_shape, output_shape, cfg).to(device)
+    # /DIFF
 
-    optimizer = instantiate(cfg.optim, params=model.parameters())  # DIFF
-    scheduler = instantiate(cfg.scheduler, optimizer=optimizer)  # DIFF
+    # DIFF: hotswap enabled optimizer/scheduler
+    optimizer = instantiate(cfg.optim, params=model.parameters())
+    scheduler = instantiate(cfg.scheduler, optimizer=optimizer)
+    # /DIFF
 
     for epoch in range(1, cfg.epochs + 1):
         train(cfg, model, device, train_loader, optimizer, epoch)
