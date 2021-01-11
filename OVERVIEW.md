@@ -1,6 +1,7 @@
 # Overview
 
 `hydra-torch`'s audience: Hydra users utilizing PyTorch and related libraries (torchvision, ...).
+
 The goals of this repository are:
 
 1. Provide a maintained and tested implementation of config classes that can be used to instantiate and configure classes belonging to the supported projects.
