@@ -13,8 +13,8 @@ from hydra.core.config_store import ConfigStore
 from dataclasses import dataclass
 
 # hydra-torch structured config imports
-from config.torch.optim import AdadeltaConf
-from config.torch.optim.lr_scheduler import StepLRConf
+from hydra_configs.torch.optim import AdadeltaConf
+from hydra_configs.torch.optim.lr_scheduler import StepLRConf
 
 
 @dataclass
