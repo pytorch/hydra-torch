@@ -8,7 +8,7 @@
 2. Provide examples and tutorials demonstrating best practices for using Hydra to configure PyTorch.
 3. Showcase a recommended approach for creating other similar configuration packages for other libraries.
 
-##### Terminology for this overview:
+#### Terminology for this overview:
 - The overall effort and repo is named:`hydra-torch`
 - **Library:** The library being configured.
   - e.g. `torch`, `torchvision`
