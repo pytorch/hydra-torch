@@ -5,9 +5,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchvision import transforms
 
-# from torch.optim import Adadelta
-# from torch.optim.lr_scheduler import StepLR
-
 ###### HYDRA BLOCK ###### # noqa: E266
 import hydra
 from hydra.utils import instantiate
@@ -22,7 +19,7 @@ from hydra_configs.torch.utils.data.dataloader import DataLoaderConf
 
 from hydra_configs.torchvision.datasets.mnist import MNISTConf
 
-# NOTE:Above still uses hydra_configs namespace, but comes from .torchvision package
+# NOTE:^ Above still uses hydra_configs namespace, but comes from .torchvision package
 
 
 @dataclass
