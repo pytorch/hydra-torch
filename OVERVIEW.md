@@ -1,16 +1,11 @@
 # Overview
 
-The audience for this library is Hydra users using PyTorch and related libraries (torchvision, ...)
+`hydra-torch`'s audience: Hydra users utilizing PyTorch and related libraries (torchvision, ...).
 The goals of this repository are:
 
-1. Provide a maintained and tested implementation of config classes that can be used instantiate and configure various classes from the supported projects.
-2. Provide examples and tutorials demonstrating best practices for using Hydra to configure PyTorch deep learning applications.
+1. Provide a maintained and tested implementation of config classes that can be used to instantiate and configure classes belonging to the supported projects.
+2. Provide examples and tutorials demonstrating best practices for using Hydra to configure PyTorch.
 3. Showcase a recommended approach for creating other similar configuration packages for other libraries.
-
-1. It demonstrates a standardization for creating and organizing Hydra configuration classes for the ML/torch community and beyond.
-2. It unifies a collection of classes across projects in one place, ensuring robust testing, version compatibility, and PyPI distributed packaging for each.
-    - We see many hydra users reimplementing these classes (and not tracking APIs of the configured projects). `hydra-torch` factors this code out.
-3. It provides best practices and guidance on how to organize code and utilize Hydra for research, production, and other innovative use cases.
 
 ##### Terminology for this overview:
 - The overall effort and repo is named:`hydra-torch`
@@ -62,8 +57,7 @@ For example:
 from hydra_configs.torch.optim import AdamConf
 ```
  
-
-This will retain compatibility even with repositories that define configs for hydra outside of the `hydra-torch` repo as long as they follow this pattern.
+This approach ensures interoperability with repositories that define configs for hydra outside of the `hydra-torch` repo as long as they follow this pattern.
 
 ##### Metapackage
 
@@ -78,7 +72,7 @@ Tests are run through pytest. The CI flow is currently: `CircleCI` -> `nox` -> `
 
 ### Versions
 
-##### Regarding Libraries
+#### Regarding Libraries
 
 Given the rapid development of libraries in the torch ecosystem, it is likely that there will be a need for multiple simultaneous version specific `hydra-configs-<library-name>` per library. This is especially relevant as API and type annotation is updated moving forward for a particular library.
 
@@ -89,14 +83,17 @@ For each library, there will be releases for each `MINOR` version starting with 
 ###### Package/Branch Names:
 The version for the `hydra-configs-<library-name>` package will be `MAJOR.MINOR.X` where `MAJOR.MINOR` tracks the library versions and `.X` is reserved for revisions of the configs for that particular `MAJOR.MINOR` should they be required.
 
-e.g. `hydra-configs-torch==1.6.0` corresponds to `torch==1.6` and if updates are needed for patches from either end, only the `PATCH` version will be updated -> `hydra-config-torch==1.6.1`
+> e.g. `hydra-configs-torch==1.6.0` corresponds to `torch==1.6` and if updates are needed for patches from either end, only the `PATCH` version will be updated -> `hydra-config-torch==1.6.1`
 
-#TODO: write out exact tag format once decided upon
-
-##### Regarding Hydra
+#### Regarding Hydra
 
 Many of the features that make using configs compelling are supported in Hydra > 1.1. For this reason, we are aiming support starting at 1.1 . Using an older version of Hydra is not advised, but may still work fine in less complex cases.
 
 
 ### Releases
 Releases will be on a per-project basis for specific versions of a project. Releases should be tied to a specific branch/tag in the repo that passes all tests via CI. We release via PyPI.
+
+#TODO: write out exact tag format once decided upon
+
+### Contributing
+We encourage contribution from all members of the community! This repo is especially ammenable to community contribution as it covers a wide breadth and can be developed in a distributed fashion. Please see [`CONTRIBUTING.md`](CONTRIBUTING.md) to get started!
