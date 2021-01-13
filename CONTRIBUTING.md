@@ -31,7 +31,7 @@ Currently, the workflow looks like the following:
 
 1. Ensure the most recent configen is installed from master.
    - `pip install git+https://github.com/facebookresearch/hydra/#subdirectory=tools/configen`
-2. Edit `configen/conf/<project-name>/configen.yaml`, listing the module and its classes from the project library to be configured.
+2. Edit `configen/conf/<project-name>.yaml`, listing the module and its classes from the project library to be configured.
    - e.g. in `/configen/conf/torchvision.yaml`:
 	```yaml
     modules:
