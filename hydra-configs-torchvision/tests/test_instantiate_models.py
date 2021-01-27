@@ -3,17 +3,15 @@ import pytest
 from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
 
-import torch
-import torchvision.models as models 
+import torchvision.models as models
 
 
 from torchvision.models.resnet import BasicBlock
-bb = BasicBlock(10,10)
 from torchvision.models.resnet import Bottleneck
-
-mnasnet_dict  = {"alpha":1.0, "num_classes":1000}
-
 from typing import Any
+
+bb = BasicBlock(10, 10)
+mnasnet_dict = {"alpha": 1.0, "num_classes": 1000}
 
 
 @pytest.mark.parametrize(
@@ -31,10 +29,10 @@ from typing import Any
         pytest.param(
             "models.resnet",
             "ResNet",
-            {"layers" : [2,2,2,2]},
+            {"layers": [2, 2, 2, 2]},
             [],
-            {"block":  Bottleneck},
-            models.ResNet(block = Bottleneck, layers = [2,2,2,2]), 
+            {"block": Bottleneck},
+            models.ResNet(block=Bottleneck, layers=[2, 2, 2, 2]),
             id="ResNetConf",
         ),
         pytest.param(
@@ -54,14 +52,14 @@ from typing import Any
             {},
             models.SqueezeNet(),
             id="SqueezeNetConf",
-        ),      
+        ),
         pytest.param(
             "models.mnasnet",
             "MNASNet",
-            {"alpha" : 1.0},
+            {"alpha": 1.0},
             [],
             {},
-            models.MNASNet(alpha  = 1.0),
+            models.MNASNet(alpha=1.0),
             id="MNASNetConf",
         ),
         pytest.param(
@@ -72,7 +70,7 @@ from typing import Any
             {},
             models.GoogLeNet(),
             id="GoogleNetConf",
-        )
+        ),
     ],
 )
 def test_instantiate_classes(
