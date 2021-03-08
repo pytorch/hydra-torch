@@ -237,7 +237,7 @@ def identity(x):
             {},
             [],
             {"transforms": [ToTensor(), ToTensor()]},
-            transforms.transforms.RandomTransforms(ToTensor(), ToTensor()]),
+            transforms.transforms.RandomTransforms([ToTensor(), ToTensor()]),
             id="RandomTransformsConf",
         ),
         pytest.param(
