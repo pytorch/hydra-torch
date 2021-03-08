@@ -14,15 +14,33 @@ pip install git+https://github.com/pytorch/hydra-torch
 Here is one of many configs available. Notice it uses the defaults defined in the torch function signatures:
 ```python
 @dataclass
-class AdadeltaConf:
-    _target_: str = "torch.optim.adadelta.Adadelta"
-    params: Any = MISSING
-    lr: Any = 1.0
-    rho: Any = 0.9
-    eps: Any = 1e-06
-    weight_decay: Any = 0
+class TripletMarginLossConf:
+    _target_: str = "torch.nn.modules.loss.TripletMarginLoss"
+    margin: float = 1.0
+    p: float = 2.0
+    eps: float = 1e-06
+    swap: bool = False
+    size_average: Any = None
+    reduce: Any = None
+    reduction: str = "mean"
 ```
-###### (once pytorch updates type annotations, these will automatically change from `Any` -> `Int/Float`)
+
+### Importing Convention:
+```python
+from hydra_configs.<package_name>.path.to.module import <ClassName>Conf
+```
+where `<package_name>` is the package being configured and `path.to.module` is the path in the original package.
+
+Inferring where the package is located is as simple as prepending `hydra_configs.` and postpending `Conf` to the original class import:
+e.g.
+```python
+#module to be configured
+from torch.optim.adam import Adam
+
+#config for the module
+from hydra_configs.torch.optim.adam import AdamConf
+```
+
 
 ### Getting Started:
 Take a look at our tutorial series:
