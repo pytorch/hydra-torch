@@ -147,7 +147,7 @@ def identity(x):
             {},
             [],
             {"transforms": [ToTensor()]},
-            transforms.transforms.RandomApply([ToTensor()], p=0.5),
+            transforms.transforms.RandomApply([ToTensor()]),
             id="RandomApplyConf",
         ),
         pytest.param(
