@@ -1,14 +1,13 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 import os
-import shutil
 import pytest
 from pathlib import Path
 from hydra.utils import get_class, instantiate
 from omegaconf import OmegaConf
-
-import torchvision.datasets as datasets
-
 from typing import Any
+
+import torch
+import torchvision.datasets as datasets
 
 
 @pytest.mark.parametrize(
@@ -88,12 +87,12 @@ def test_instantiate_classes(
     expected_class: Any,
 ) -> None:
 
-    # Copy 'dummy dataset' from MNIST to current dataset temp data dir:
-    dummy_data_dir = os.path.join(os.path.dirname(__file__), "dummy_data_dir")
+    # Create fake dataset and put it in tmpdir for test:
     tmp_data_root = tmpdir.mkdir("data")
-    src = os.path.join(dummy_data_dir, "MNIST/processed")
-    dst = os.path.join(tmp_data_root, classname, "processed")
-    shutil.copytree(src, dst)
+    processed_dir = os.path.join(tmp_data_root, classname, "processed")
+    os.makedirs(processed_dir)
+    torch.save(torch.tensor([[1.0], [1.0]]), processed_dir + "/training.pt")
+    torch.save(torch.tensor([1.0]), processed_dir + "/test.pt")
 
     # cfg is populated here since it requires tmpdir testfixture
     cfg["root"] = str(tmp_data_root)
