@@ -39,21 +39,3 @@ class KMNISTConf:
     transform: Any = None
     target_transform: Any = None
     download: Any = False
-
-
-@dataclass
-class EMNISTConf:
-    _target_: str = "torchvision.datasets.mnist.EMNIST"
-    root: Any = MISSING
-    split: Any = MISSING
-    kwargs: Any = MISSING
-
-
-@dataclass
-class QMNISTConf:
-    _target_: str = "torchvision.datasets.mnist.QMNIST"
-    root: Any = MISSING
-    what: Any = None
-    compat: Any = True
-    train: Any = True
-    kwargs: Any = MISSING

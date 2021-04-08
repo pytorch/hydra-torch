@@ -1,3 +1,6 @@
+defaults:
+    - configen_schema
+
 configen:
   # output directory
   output_dir: ${hydra:runtime.cwd}
@@ -15,15 +18,21 @@ configen:
 
   # list of modules to generate configs for
   modules:
+    - name: torchvision.datasets.vision
+      classes:
+        - VisionDataset
+        - StandardTransform
+
     - name: torchvision.datasets.mnist
       # mnist datasets
       classes:
         - MNIST
         - FashionMNIST
         - KMNIST
-        - EMNIST
-        - QMNIST
-
+     # TODO: The following need to be manually created for torchvision==0.7
+     #  - EMNIST
+     #  - QMNIST
+     #
     - name: torchvision.transforms.transforms
       default_flags:
           _convert_: ALL

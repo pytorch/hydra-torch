@@ -234,10 +234,10 @@ def identity(x):
         pytest.param(
             "transforms.transforms",
             "RandomTransforms",
-            {},
+            {"transforms": []},
             [],
-            {"transforms": [ToTensor()]},
-            transforms.transforms.RandomTransforms([ToTensor()]),
+            {},
+            transforms.transforms.RandomTransforms([]),
             id="RandomTransformsConf",
         ),
         pytest.param(

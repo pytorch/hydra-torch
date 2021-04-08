@@ -44,5 +44,9 @@ def lint(session):
 @nox.session(python=PYTHON_VERSIONS, reuse_venv=True)
 def tests(session):
     setup_dev_env(session)
+    for target in test_targets:
+        session.run(
+            "pip", "install", "-r", target + "/requirements/dev.txt", silent=SILENT
+        )
     session.install(*test_targets)  # install config packages
     session.run("pytest", *test_targets)
