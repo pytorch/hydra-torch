@@ -1,0 +1,4 @@
+defaults:
+  - base_adam
+
+lr: 0.89
