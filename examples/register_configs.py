@@ -3,9 +3,9 @@ import hydra
 from typing import Any
 from omegaconf import OmegaConf
 
-# registers all 'base' optimizer configs with configstore instance
 import hydra_configs.torch.optim
 
+# registers all 'base' optimizer configs with configstore instance
 hydra_configs.torch.optim.register_configs()
 
 
