@@ -1,3 +1,4 @@
+# Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
 # flake8: noqa
 # Mirrors torch/optim __init__ to allow for symmetric import structure
 from .adadelta import AdadeltaConf
@@ -13,6 +14,23 @@ from .rmsprop import RMSpropConf
 
 from .lbfgs import LBFGSConf
 from . import lr_scheduler
+
+from hydra.core.config_store import ConfigStoreWithProvider
+
+
+def register():
+    with ConfigStoreWithProvider("torch") as cs:
+        cs.store(group="torch/optim", name="adadelta", node=AdadeltaConf)
+        cs.store(group="torch/optim", name="adagrad", node=AdagradConf)
+        cs.store(group="torch/optim", name="adam", node=AdamConf)
+        cs.store(group="torch/optim", name="adamw", node=AdamWConf)
+        cs.store(group="torch/optim", name="sparseadam", node=SparseAdamConf)
+        cs.store(group="torch/optim", name="adamax", node=AdamaxConf)
+        cs.store(group="torch/optim", name="asgd", node=ASGDConf)
+        cs.store(group="torch/optim", name="sgd", node=SGDConf)
+        cs.store(group="torch/optim", name="lbfgs", node=LBFGSConf)
+        cs.store(group="torch/optim", name="rprop", node=RpropConf)
+        cs.store(group="torch/optim", name="rmsprop", node=RMSpropConf)
 
 
 del adadelta
