@@ -266,7 +266,7 @@ However, there are some limitations in our current strategy that the [Intermedia
 Once comfortable with the basics, continue on to the [Intermediate Tutorial].
 
 [//]: # (These are reference links used in the body of this note and get stripped out when the markdown processor does its job. There is no need to format nicely because it shouldn't be seen. Thanks SO - http://stackoverflow.com/questions/4823468/store-comments-in-markdown-syntax)
-   [pytorch mnist example]: <https://github.com/pytorch/examples/blob/master/mnist/main.py>
+   [pytorch mnist example]: <https://github.com/pytorch/examples/blob/main/mnist/main.py>
    [mnist_00.py]: mnist_00.py
    [config schema]: <https://hydra.cc/docs/tutorials/structured_config/schema>
    [configstore]: <https://hydra.cc/docs/tutorials/structured_config/config_store>
