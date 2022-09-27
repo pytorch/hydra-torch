@@ -7,7 +7,7 @@ requirements = [
 
 setup(
     name="hydra-configs-torchvision",
-    version="0.7.1",
+    version="0.8.2",
     packages=find_namespace_packages(include=["hydra_configs*"]),
     author=["Omry Yadan", "Rosario Scalise"],
     author_email=["omry@fb.com", "rosario@cs.uw.edu"],
