@@ -1,6 +1,6 @@
 -r requirements.txt
-torch==1.6
-torchvision==0.7
+torch==1.7.1
+torchvision==0.8.2
 hydra-configen==0.9.0.dev7
 black==20.8b1
 coverage
