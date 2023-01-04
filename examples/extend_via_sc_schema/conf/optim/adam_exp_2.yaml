@@ -1,0 +1,7 @@
+defaults:
+  - base_adam
+
+lr: 0.89
+betas:
+  - 0.5
+  - 0.9
