@@ -1,5 +1,4 @@
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved
-# flake8: noqa
 from __future__ import print_function
 import torch
 import torch.nn as nn
@@ -8,18 +7,18 @@ from torchvision import datasets, transforms
 from torch.optim import Adadelta
 from torch.optim.lr_scheduler import StepLR
 
-###### HYDRA BLOCK ######
+###### HYDRA BLOCK ###### # noqa: E266
 import hydra
 from hydra.core.config_store import ConfigStore
 from dataclasses import dataclass
 
-# hydra-torch structured config imports
+# hydra-torch structured config imports:
 from hydra_configs.torch.optim import AdadeltaConf
 from hydra_configs.torch.optim.lr_scheduler import StepLRConf
 
 
 @dataclass
-class MNISTConf:
+class TopLvlConf:
     batch_size: int = 64
     test_batch_size: int = 1000
     epochs: int = 14
@@ -32,13 +31,13 @@ class MNISTConf:
     adadelta: AdadeltaConf = AdadeltaConf()
     steplr: StepLRConf = StepLRConf(
         step_size=1
-    )  # we pass a default for step_size since it is required, but missing a default in PyTorch (and consequently in hydra-torch)
+    )  # we pass a default for step_size since it is required, but missing a default in PyTorch (and consequently in hydra-torch) # noqa: E501
 
 
 cs = ConfigStore.instance()
-cs.store(name="mnistconf", node=MNISTConf)
+cs.store(name="toplvlconf", node=TopLvlConf)
 
-###### / HYDRA BLOCK ######
+###### / HYDRA BLOCK ###### # noqa: E266
 
 
 class Net(nn.Module):
@@ -118,9 +117,9 @@ def test(model, device, test_loader):
     )
 
 
-@hydra.main(config_name="mnistconf")
+@hydra.main(config_name="toplvlconf")  # DIFF
 def main(cfg):  # DIFF
-    print(cfg.pretty())
+    print(cfg.pretty())  # DIFF
     use_cuda = not cfg.no_cuda and torch.cuda.is_available()  # DIFF
     torch.manual_seed(cfg.seed)  # DIFF
     device = torch.device("cuda" if use_cuda else "cpu")
