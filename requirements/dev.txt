@@ -2,7 +2,7 @@
 torch==1.7.1
 torchvision==0.8.2
 hydra-configen==0.9.0.dev7
-black==20.8b1
+black==26.3.1
 coverage
 flake8==3.8.4
 flake8-copyright
